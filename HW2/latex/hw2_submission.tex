@@ -1,0 +1,49 @@
+\UseRawInputEncoding
+\documentclass[12pt]{report}
+\usepackage{fullpage}
+\usepackage{indentfirst}
+\usepackage{verbatim}
+\usepackage{gensymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage[title]{appendix}
+\usepackage{listings}
+\captionsetup{font=footnotesize}
+\usepackage[cache=false]{minted}
+\usepackage{multirow}
+\usepackage{listings}
+\usepackage{pdfpages}
+
+\newlength{\originalVOffset}
+\newlength{\originalHOffset}
+\setlength{\originalVOffset}{\voffset}   
+\setlength{\originalHOffset}{\hoffset}
+
+\theoremstyle{definition}
+\newtheorem{exmp}{Example}[section]
+\newcommand{\degrees}{\degree C }
+
+\author{AE-6505 - Kalman Filtering \\\\ Kadhir Umasankar}
+\title{HW - 2 Submission}
+\date{Spring 2022}
+\renewcommand\thesection{\arabic{section}}
+
+\begin{document}
+\maketitle
+
+\setlength{\voffset}{-0.1cm}
+\setlength{\hoffset}{-0.1cm}
+\includepdf[pages=-]{../hw2_work.pdf}
+\setlength{\voffset}{\originalVOffset}
+\setlength{\hoffset}{\originalHOffset}
+
+%\appendix
+\section{Appendix: MATLAB Code}
+\inputminted[linenos=true, breaklines=true, breakanywhere=true, fontsize=\scriptsize]{MATLAB}{../hw2.m}
+
+\end{document}
+
