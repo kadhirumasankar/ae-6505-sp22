@@ -21,7 +21,7 @@ sig1 = 1.524;
 sig2 = pi/180/10;
 
 % Visualize data
-for i=1:n
+for i=1:12
     a = [Y_obs(i, 1) 0 0]';
     alpha = -Y_obs(i, 2);
     beta = Y_obs(i, 3);
@@ -102,7 +102,7 @@ for i = 1:max_iter
     x_hat = P * Hty;
     
     % Add state deviation to get final estimate
-    X_new = X_0 + x_hat;
+    X_new = X_0 + x_hat
     
     % Use the new estimates as the starting point for the next iteration
     X_0 = X_new;
