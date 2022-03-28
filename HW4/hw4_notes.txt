@@ -1,0 +1,9 @@
+⚠️Remember to be very detailed in this HW⚠️
+
+5.4. Should be able to copy from solution manual
+
+5.11. Should be able to copy from solution manual
+
+2. Change code to incorporate new data set, and apriori (how do I do that) (oh I think maybe change the inf values from last time?)
+Incorporate Kalman filter
+Compare this to the first and third iterations of the batch approach
