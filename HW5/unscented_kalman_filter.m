@@ -22,6 +22,7 @@ P = diag([4 4 4 0.1 0.1 0.1])/3.281^2;
 R = [(1.524)^2 0 0;
      0 (0.1*pi/180)^2 0;
      0 0 (0.1*pi/180)^2];      %the error covariance constant to be used
+Q = diag([0.5^2,0.5^2,0.5^2,0.01^2,0.01^2,0.01^2]);
 M = eye(3); % COMBAK: is M eye(3) correct?
  
 for i =2:length(rho)
@@ -51,9 +52,9 @@ for i =2:length(rho)
     xhatk_ = sum(xhat_k, 2)/(2*n);
     temp_Pk_ = 0;
     for j = 1:2*n
-        temp_Pk_ = temp_Pk_ + (xhat_k(:,j) - xhatk_)*(xhat_k(:,j) - xhatk_)'
+        temp_Pk_ = temp_Pk_ + (xhat_k(:,j) - xhatk_)*(xhat_k(:,j) - xhatk_)';
     end
-    Pk_ = temp_Pk_/(2*n) + eye(6)*1e-3; % Add Q for noise floor + Q;
+    Pk_ = temp_Pk_/(2*n) + Q;
     
     xhat_k = [];
     % Sigma points
