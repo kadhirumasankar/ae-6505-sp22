@@ -58,7 +58,6 @@ for i =2:length(rho)
   % Kalman gain
   K = P*H'*inv(H*P*H'+R);
   % Measurement update
-  H*x_(:,i)
   x_(:,i) = x_(:,i) + K * (y_obs(:,i) - y_comp(:,i));
   P = (eye(6)-K*H)*P;
   
