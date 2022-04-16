@@ -21,6 +21,7 @@ P = diag([4 4 4 0.1 0.1 0.1])/3.281^2;
 R = [(1.524)^2 0 0;
      0 (0.1*pi/180)^2 0;
      0 0 (0.1*pi/180)^2];      %the error covariance constant to be used
+Q = diag([0.5^2,0.5^2,0.5^2,0.01^2,0.01^2,0.01^2]);
 M = eye(3); % COMBAK: is M eye(3) correct?
  
 for i =2:length(rho)
@@ -38,7 +39,7 @@ for i =2:length(rho)
        0 0 0 0 0 0;
        0 0 0 0 0 0;
        0 0 0 0 0 0];
-  Pdot = A*P + P*A'; % + LQL' COMBAK: I didn't use Q here bc we weren't given one. OK?
+  Pdot = A*P + P*A' + Q; % + LQL' COMBAK: I didn't use Q here bc we weren't given one. OK?
   P = P + Pdot*dt;
   
   dt = 0.1;
@@ -58,10 +59,10 @@ for i =2:length(rho)
        (-Y_/X_^2)/(1 + (Y_/X_)^2) (1/X_)/(1+(Y_/X_)^2) 0 0 0 0;
        ((-X_*Z_)/(X_^2 + Y_^2)^(3/2))/(1+(Z_^2)/(X_^2 + Y_^2)) ((-Y_*Z_)/(X_^2 + Y_^2)^(3/2))/(1 + (Z_^2)/(X_^2 + Y_^2)) ((1)/(X_^2 + Y_^2)^(1/2))/(1 + (Z_^2)/(X_^2 + Y_^2)) 0 0 0];
   % Kalman gain
-  K = P*H'*inv(H*P*H'+M*R*M');
+  K = P*H'*inv(H*P*H'+ R);
   % Measurement update
   x_(:,i) = x_(:,i) + K * (y_obs(:,i) - y_comp(:,i));
-  P = (eye(6)-K*H)*P*(eye(6)-K*H)' + K*M*R*M'*K';
+  P = (eye(6)-K*H)*P*(eye(6)-K*H)' + K*R*K';
   
   store_x = [store_x x_(:, i)];
 
