@@ -26,7 +26,7 @@ states = [];
 target_states = [];
 time = [];
 for i = 1:length(statesMsgs)
-    if mod(i,1)==0
+    if mod(i,20)==0
         current_state = statesMsgs(i);
         current_state = current_state{1}.Data;
         states = [states current_state(1:12)];
@@ -91,8 +91,8 @@ scatter3(states(1,:), states(2,:), states(3,:), 10, 'm', 'filled')
 % Initial conditions
 x_(:,1) = states(:,1); % Using the first column from the data
 P = zeros(12); % COMBAK: perfect knowledge of initial state so zero
-Q = eye(12); % COMBAK: need to change this later to fit the function
-R = eye(4);
+Q = eye(12).*1e-3;
+R = eye(4); % COMBAK: need to change this later to fit the function
 
 for i =2:length(y1)
     dt = time(i) - time(i-1);
@@ -110,8 +110,9 @@ for i =2:length(y1)
   
 %   My code
 %   Propagation of state
-    x_(:,i) = propagate_state(x_(:,i-1), target_states(:,i-1), dt, m, Ixx, Iyy, Izz, g);
-    
+    [t_out, y_out] = ode45(@(t,y) drone_dynamics(t, y, target_states(:,i-1), m, Ixx, Iyy, Izz, g), [0 dt], x_(:, i-1));
+%     x_(:,i) = propagate_state(x_(:,i-1), target_states(:,i-1), dt, m, Ixx, Iyy, Izz, g);
+    x_(:,i) = y_out(end,:)';
 %     My code
     % Propagation of state covariance
     A = find_A(x_(:,i-1), m, Ixx, Iyy, Izz, g);
@@ -176,6 +177,7 @@ for i =2:length(y1)
     
     % Measurement update
     x_(:,i) = x_(:,i) + K * (y_obs(:,i) - y_comp(:,i));
+    
     P = (eye(12)-K*H)*P*(eye(12)-K*H)' + K*R*K';
   
 %     store_x = [store_x x_(:, i)];
@@ -297,4 +299,34 @@ function x = propagate_state(last_state, target_state, dt, m, Ixx, Iyy, Izz, g)
         x = x + xhatdot*(t-last_t);
         last_t = t;
     end
+end
+
+function xhatdot = drone_dynamics(t, x, target_state, m, Ixx, Iyy, Izz, g)
+    x_pos = x(1);
+    y_pos = x(2);
+    z_pos = x(3);
+    x_vel = x(4);
+    y_vel = x(5);
+    z_vel = x(6);
+    roll = x(7);
+    pitch = x(8);
+    yaw = x(9);
+    roll_rate = x(10);
+    pitch_rate = x(11);
+    yaw_rate = x(12);
+    [u3, u4, u5, u6] = get_u(x, target_state, m, Ixx, Iyy, Izz, g);
+
+    xhatdot =[x_vel;
+              y_vel;
+              z_vel;
+              (u3*(sin(roll)*sin(yaw) + cos(roll)*cos(yaw)*sin(pitch)))/m;
+              -(u3*(cos(yaw)*sin(roll) - cos(roll)*sin(pitch)*sin(yaw)))/m;
+              -(g*m - u3*cos(pitch)*cos(roll))/m;
+              roll_rate + yaw_rate*cos(roll)*tan(pitch) + pitch_rate*tan(pitch)*sin(roll);
+              pitch_rate*cos(roll) - yaw_rate*sin(roll);
+              (yaw_rate*cos(roll))/cos(pitch) + (pitch_rate*sin(roll))/cos(pitch);
+              (u4 + Iyy*pitch_rate*yaw_rate - Izz*pitch_rate*yaw_rate)/Ixx;
+              (u5 - Ixx*roll_rate*yaw_rate + Izz*roll_rate*yaw_rate)/Iyy;
+              (u6 + Ixx*pitch_rate*roll_rate - Iyy*pitch_rate*roll_rate)/Izz];
+
 end
