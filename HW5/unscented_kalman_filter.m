@@ -17,13 +17,16 @@ scatter3(plotx, ploty, plotz, 10, 'm', 'filled')
 
 % Initial Conditions
 x_(:,1) = [0.4921 0.4921 2.0013 -26.2467 114.3051 65.9941]'/3.281;  
+% x_(:,1) = [-0.6562; 0.9843; 1.4764;  -32.8084; 119.6219; 55.7806]/3.281;
 n = size(x_, 1);
-P = diag([4 4 4 0.1 0.1 0.1])/3.281^2;
+P = diag([4 4 4 0.1 0.1 0.1])/3.281;
 R = [(1.524)^2 0 0;
      0 (0.1*pi/180)^2 0;
      0 0 (0.1*pi/180)^2];      %the error covariance constant to be used
-Q = diag([0.5^2,0.5^2,0.5^2,0.01^2,0.01^2,0.01^2]);
+% Q = diag([0.5^2,0.5^2,0.5^2,0.01^2,0.01^2,0.01^2]);
+Q = zeros(6);
 M = eye(3); % COMBAK: is M eye(3) correct?
+W = ones(2*n,1) / (2*n); % UKF weights
  
 for i =2:length(rho)
     % Observed
@@ -33,10 +36,10 @@ for i =2:length(rho)
     % Sigma points
     for j = 1:2*n
         if j<=n
-            xtilda = chol(n*P)';
+            xtilda = chol(n*P);
             xtilda = xtilda(j,:)';
         else
-            xtilda = -chol(n*P)';
+            xtilda = -chol(n*P);
             xtilda = xtilda(j-n,:)';
         end
         xhat_k_1 = [xhat_k_1 x_(:,i-1)+xtilda];
@@ -60,10 +63,10 @@ for i =2:length(rho)
     % Sigma points
     for j = 1:2*n
         if j<=n
-            xtilda = chol(n*P)';
+            xtilda = chol(n*P);
             xtilda = xtilda(j,:)';
         else
-            xtilda = -chol(n*P)';
+            xtilda = -chol(n*P);
             xtilda = xtilda(j-n,:)';
         end
         xhat_k = [xhat_k xhatk_+xtilda];
@@ -110,3 +113,5 @@ zlabel('z (m)')
 title('Trajectory of Baseball')
 legend('Observed', 'Predicted', 'Location', 'best')
 hold off;
+
+writematrix(x_, 'baseball_ukf.csv')

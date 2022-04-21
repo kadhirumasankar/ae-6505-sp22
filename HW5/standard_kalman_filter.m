@@ -16,7 +16,8 @@ scatter3(plotx, ploty, plotz, 10, 'm', 'filled')
 
 % Initial Conditions
 x_(:,1) = [0.4921 0.4921 2.0013 -26.2467 114.3051 65.9941]'/3.281;  
-% x_(:,1) = zeros(6,1);% Given initial conditions
+% x_(:,1) = [-0.6562; 0.9843; 1.4764;  -32.8084; 119.6219; 55.7806]/3.281;
+
 P = diag([4 4 4 0.1 0.1 0.1])/3.281^2;
 R = [(1.524)^2 0 0;
      0 (0.1*pi/180)^2 0;
@@ -74,3 +75,5 @@ zlabel('z (m)')
 title('Trajectory of Baseball')
 legend('Observed', 'Predicted', 'Location', 'best')
 hold off;
+
+writematrix(x_, 'baseball_kf.csv')
