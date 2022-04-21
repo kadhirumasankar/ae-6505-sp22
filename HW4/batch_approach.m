@@ -94,18 +94,18 @@ for i = 1:max_iter
     end
     
     % Compute state deviation
-    P = inv(HtH);
+    P = inv(HtH + inv(P_bar));
     
     % Uncomment line 1 if no apriori, uncomment line 2 if given apriori info
 %     x_hat = P * Hty;
-    x_hat = inv(HtH + inv(P_bar))*(Hty + inv(P_bar)*x_bar);
+    x_hat = P*(Hty + inv(P_bar)*x_bar);
     
     % Add state deviation to get final estimate
     X_new = X_0 + x_hat
     
     % Use the new estimates as starting point for next iter
     X_0 = X_new;
-    P_bar = inv(HtH + inv(P_bar));
+    P_bar = P;
     
     %Plot estimated trajectory for current iteration
     figure(1);
