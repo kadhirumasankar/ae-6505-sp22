@@ -110,37 +110,11 @@ for i =2:length(y1)
   
 %   My code
 %   Propagation of state
-    last_state = x_(:,i-1);
-    x_pos = last_state(1);
-    y_pos = last_state(2);
-    z_pos = last_state(3);
-    x_vel = last_state(4);
-    y_vel = last_state(5);
-    z_vel = last_state(6);
-    roll = last_state(7);
-    pitch = last_state(8);
-    yaw = last_state(9);
-    roll_rate = last_state(10);
-    pitch_rate = last_state(11);
-    yaw_rate = last_state(12);
-    [u3, u4, u5, u6] = get_u(last_state, target_states(:,i-1), m, Ixx, Iyy, Izz, g);
-    xhatdot =[x_vel;
-              y_vel;
-              z_vel;
-              (u3*(sin(roll)*sin(yaw) + cos(roll)*cos(yaw)*sin(pitch)))/m;
-              -(u3*(cos(yaw)*sin(roll) - cos(roll)*sin(pitch)*sin(yaw)))/m;
-              -(g*m - u3*cos(pitch)*cos(roll))/m;
-              roll_rate + yaw_rate*cos(roll)*tan(pitch) + pitch_rate*tan(pitch)*sin(roll);
-              pitch_rate*cos(roll) - yaw_rate*sin(roll);
-              (yaw_rate*cos(roll))/cos(pitch) + (pitch_rate*sin(roll))/cos(pitch);
-              (u4 + Iyy*pitch_rate*yaw_rate - Izz*pitch_rate*yaw_rate)/Ixx;
-              (u5 - Ixx*roll_rate*yaw_rate + Izz*roll_rate*yaw_rate)/Iyy;
-              (u6 + Ixx*pitch_rate*roll_rate - Iyy*pitch_rate*roll_rate)/Izz];
-    x_(:,i) = x_(:,i-1) + xhatdot*dt;
-
+    x_(:,i) = propagate_state(x_(:,i-1), target_states(:,i-1), dt, m, Ixx, Iyy, Izz, g);
+    
 %     My code
     % Propagation of state covariance
-    A = find_A(last_state, m, Ixx, Iyy, Izz, g);
+    A = find_A(x_(:,i-1), m, Ixx, Iyy, Izz, g);
     Pdot = A*P + P*A' + Q; % + LQL' COMBAK: I didn't use Q here bc we weren't given one. OK?
     P = P + Pdot*dt;
   
@@ -287,4 +261,40 @@ function A = find_A(states, m, Ixx, Iyy, Izz, g)
                                     0, -(Ixx * q10 - Izz * q10) / Iyy;
          0, 0, 0, 0, 0, 0, 0, 0, 0, (Ixx * q11 - Iyy * q11) / Izz, ...
                                     (Ixx * q10 - Iyy * q10) / Izz, 0];
+end
+
+function x = propagate_state(last_state, target_state, dt, m, Ixx, Iyy, Izz, g)
+    x = last_state;
+    last_t = 0;
+    for t = linspace(1e-99,dt,20)
+        x_pos = x(1);
+        y_pos = x(2);
+        z_pos = x(3);
+        x_vel = x(4);
+        y_vel = x(5);
+        z_vel = x(6);
+        roll = x(7);
+        pitch = x(8);
+        yaw = x(9);
+        roll_rate = x(10);
+        pitch_rate = x(11);
+        yaw_rate = x(12);
+        [u3, u4, u5, u6] = get_u(x, target_state, m, Ixx, Iyy, Izz, g);
+
+        xhatdot =[x_vel;
+                  y_vel;
+                  z_vel;
+                  (u3*(sin(roll)*sin(yaw) + cos(roll)*cos(yaw)*sin(pitch)))/m;
+                  -(u3*(cos(yaw)*sin(roll) - cos(roll)*sin(pitch)*sin(yaw)))/m;
+                  -(g*m - u3*cos(pitch)*cos(roll))/m;
+                  roll_rate + yaw_rate*cos(roll)*tan(pitch) + pitch_rate*tan(pitch)*sin(roll);
+                  pitch_rate*cos(roll) - yaw_rate*sin(roll);
+                  (yaw_rate*cos(roll))/cos(pitch) + (pitch_rate*sin(roll))/cos(pitch);
+                  (u4 + Iyy*pitch_rate*yaw_rate - Izz*pitch_rate*yaw_rate)/Ixx;
+                  (u5 - Ixx*roll_rate*yaw_rate + Izz*roll_rate*yaw_rate)/Iyy;
+                  (u6 + Ixx*pitch_rate*roll_rate - Iyy*pitch_rate*roll_rate)/Izz];
+
+        x = x + xhatdot*(t-last_t);
+        last_t = t;
+    end
 end
