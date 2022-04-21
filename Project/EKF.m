@@ -26,11 +26,13 @@ states = [];
 target_states = [];
 time = [];
 for i = 1:length(statesMsgs)
-    current_state = statesMsgs(i);
-    current_state = current_state{1}.Data;
-    states = [states current_state(1:12)];
-    target_states = [target_states current_state(13:24)];
-    time = [time current_state(end)];
+    if mod(i,1)==0
+        current_state = statesMsgs(i);
+        current_state = current_state{1}.Data;
+        states = [states current_state(1:12)];
+        target_states = [target_states current_state(13:24)];
+        time = [time current_state(end)];
+    end
 end
 time = (time)./1e9;
 disp("Everything in SI, angles in radians")
@@ -89,9 +91,9 @@ scatter3(states(1,:), states(2,:), states(3,:), 10, 'm', 'filled')
 % Initial conditions
 x_(:,1) = states(:,1); % Using the first column from the data
 P = zeros(12); % COMBAK: perfect knowledge of initial state so zero
-Q = zeros(12); % COMBAK: need to change this later to fit the function
+Q = eye(12); % COMBAK: need to change this later to fit the function
 R = eye(4);
- 
+
 for i =2:length(y1)
     dt = time(i) - time(i-1);
 %     Baseball code
