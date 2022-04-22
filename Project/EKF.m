@@ -24,14 +24,30 @@ bag = rosbag('2022-04-20-15-32-08.bag');
 statesMsgs = readMessages(select(bag, 'Topic', '/lqr_controller/states'),'DataFormat','struct');
 states = [];
 target_states = [];
+marker_locs = [];
 time = [];
 for i = 1:length(statesMsgs)
-    if mod(i,20)==0
+    if mod(i,10)==0
         current_state = statesMsgs(i);
         current_state = current_state{1}.Data;
         states = [states current_state(1:12)];
         target_states = [target_states current_state(13:24)];
+        marker_locs = [marker_locs get_marker_locs(current_state(1:12))];
         time = [time current_state(end)];
+        current_state(1:3) - mean([marker_locs(1:3:size(marker_locs,1),end) marker_locs(2:3:size(marker_locs,1),end) marker_locs(3:3:size(marker_locs,1),end)],1)'
+%         figure(1)
+%         scatter3(current_state(1), current_state(2), current_state(3), 10, 'm', 'filled');
+%         hold on
+%         scatter3(marker_locs(1,end), marker_locs(2,end), marker_locs(3,end), 10, 'black', 'filled');
+%         norm(marker_locs(4:6,end)-current_state(1:3))
+% %         scatter3(marker_locs(4,end), marker_locs(5,end), marker_locs(6,end), 10, 'black', 'filled');
+% %         scatter3(marker_locs(7,end), marker_locs(8,end), marker_locs(9,end), 10, 'black', 'filled');
+% %         scatter3(marker_locs(10,end), marker_locs(11,end), marker_locs(12,end), 10, 'black', 'filled');
+% %         scatter3(marker_locs(14,end), marker_locs(15,end), marker_locs(15,end), 10, 'black', 'filled');
+%         hold off
+    end
+    if i > length(statesMsgs)/1
+        break
     end
 end
 time = (time)./1e9;
@@ -74,6 +90,12 @@ y4 = vecnorm(states(1:3,:)-cam4loc);
 % Visualizing data
 figure(1)
 scatter3(states(1,:), states(2,:), states(3,:), 10, 'm', 'filled')
+% hold on
+% scatter3(marker_locs(1,:), marker_locs(2,:), marker_locs(3,:), 5, 'r', 'filled')
+% scatter3(marker_locs(4,:), marker_locs(5,:), marker_locs(6,:), 5, 'b', 'filled')
+% scatter3(marker_locs(7,:), marker_locs(8,:), marker_locs(9,:), 5, 'g', 'filled')
+% scatter3(marker_locs(10,:), marker_locs(11,:), marker_locs(12,:), 5, 'k', 'filled')
+% scatter3(marker_locs(13,:), marker_locs(14,:), marker_locs(15,:), 5, 'k', 'filled')
 
 % Baseball code
 % % Initial Conditions
@@ -91,9 +113,11 @@ scatter3(states(1,:), states(2,:), states(3,:), 10, 'm', 'filled')
 % Initial conditions
 x_(:,1) = states(:,1); % Using the first column from the data
 P = zeros(12); % COMBAK: perfect knowledge of initial state so zero
-Q = eye(12).*1e-3;
-R = eye(4); % COMBAK: need to change this later to fit the function
+Q = eye(12).*1e-7;
+R = eye(4).*.001; % COMBAK: need to change this later to fit the function
 
+store_x = [x_(:,1)];
+store_P = [norm(diag(P))];
 for i =2:length(y1)
     dt = time(i) - time(i-1);
 %     Baseball code
@@ -101,7 +125,7 @@ for i =2:length(y1)
 %   y_obs(:,i) = [rho(i); alpha(i); beta(i)];% + randn*sigmaw;
 %   My code
 %   Observed
-    y_obs(:,i) = [y1(i); y2(i); y3(i); y4(i)];
+    y_obs(:,i) = [y1(i); y2(i); y3(i); y4(i)] + sqrt(diag(R)).*randn(size(diag(R)));
   
 %     Baseball code
 %   % Propagation of state
@@ -180,21 +204,41 @@ for i =2:length(y1)
     
     P = (eye(12)-K*H)*P*(eye(12)-K*H)' + K*R*K';
   
-%     store_x = [store_x x_(:, i)];
+    store_x = [store_x x_(:, i)];
+    store_P = [store_P norm(diag(P))];
 
     figure(1)
     hold on
     scatter3(x_(1,end), x_(2,end), x_(3,end), 20, 'black')
+    fprintf("%g%% done\n", (i/length(y1)*100))
+    
+    err = store_x(:,i) - states(:,i);
+    
 end
-
 xlabel('x (m)')
 ylabel('y (m)')
 zlabel('z (m)')
 title('Trajectory of Baseball')
 legend('Observed', 'Predicted', 'Location', 'best')
 hold off;
-writematrix(x_, 'baseball_ekf.csv')
 
+err = store_x - states;
+
+figure(2)
+subplot(3,1,1)
+hold on
+plot(time, store_x(1,:))
+plot(time, states(1,:))
+subplot(3,1,2)
+hold on
+plot(time, store_x(2,:))
+plot(time, states(2,:))
+subplot(3,1,3)
+hold on
+plot(time, store_x(3,:))
+plot(time, states(3,:))
+
+writematrix(x_, 'baseball_ekf.csv')
 %% Functions
 function [u3 u4 u5 u6] = get_u(states, target_states, m, Ixx, Iyy, Izz, g)
     q7 = states(7);
@@ -329,4 +373,26 @@ function xhatdot = drone_dynamics(t, x, target_state, m, Ixx, Iyy, Izz, g)
               (u5 - Ixx*roll_rate*yaw_rate + Izz*roll_rate*yaw_rate)/Iyy;
               (u6 + Ixx*pitch_rate*roll_rate - Iyy*pitch_rate*roll_rate)/Izz];
 
+end
+
+function out = get_marker_locs(state)
+    x = state(1);
+    y = state(2);
+    z = state(3);
+    roll = state(7);
+    pitch = state(8);
+    yaw = state(9);
+    marker_1_loc = [0; 0; 0.05];
+    marker_2_loc = [0.105; 0; 0];
+    marker_3_loc = [0; 0.06; 0];
+    marker_4_loc = [-0.115; 0; 0];
+    marker_5_loc = [0; -0.06; 0];
+    R = [cos(pitch)*cos(yaw) cos(pitch)*sin(yaw) -sin(pitch);
+         sin(roll)*sin(pitch)*cos(yaw)-cos(roll)*sin(yaw) sin(roll)*sin(pitch)*sin(yaw)+cos(roll)*cos(yaw) sin(roll)*cos(pitch);
+         cos(roll)*sin(pitch)*cos(yaw)+sin(roll)*sin(yaw) cos(roll)*sin(pitch)*sin(yaw)-sin(roll)*cos(yaw) cos(roll)*cos(pitch)];
+     out = [state(1:3) + R*marker_1_loc;
+           state(1:3) + R*marker_2_loc;
+           state(1:3) + R*marker_3_loc;
+           state(1:3) + R*marker_4_loc;
+           state(1:3) + R*marker_5_loc];
 end
