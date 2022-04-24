@@ -1,25 +1,14 @@
 clc; clear all; close all;
 
 %% Prepping state data
-% Baseball code
-% data = importdata('homerun_data_HW4.txt');
-% % data(1,:) = [];
-% tspan = data(:, 1);
-% rho = data(:, 2)/3.281; % in m
-% alpha = data(:, 3)*pi/180; % in rad
-% beta = data(:, 4)*pi/180; % in rad
-% g = 9.81;
-% dt = 0.1;
-% store_x = [];
 
-% My code
 m = 1.545;
 Ixx = 0.029125;
 Iyy = 0.029125;
 Izz = 0.055225;
 g = 9.81;
 
-bag = rosbag('2022-04-20-15-32-08.bag');
+bag = rosbag('circle.bag');
 
 statesMsgs = readMessages(select(bag, 'Topic', '/lqr_controller/states'),'DataFormat','struct');
 states = [];
@@ -27,23 +16,24 @@ target_states = [];
 marker_locs = [];
 time = [];
 for i = 1:length(statesMsgs)
-    if mod(i,10)==0
+    if mod(i,20)==0
         current_state = statesMsgs(i);
         current_state = current_state{1}.Data;
         states = [states current_state(1:12)];
         target_states = [target_states current_state(13:24)];
         marker_locs = [marker_locs get_marker_locs(current_state(1:12))];
         time = [time current_state(end)];
-        current_state(1:3) - mean([marker_locs(1:3:size(marker_locs,1),end) marker_locs(2:3:size(marker_locs,1),end) marker_locs(3:3:size(marker_locs,1),end)],1)'
 %         figure(1)
-%         scatter3(current_state(1), current_state(2), current_state(3), 10, 'm', 'filled');
+%         scatter3(current_state(1), current_state(2), current_state(3), 10, 'm', 'filled')
 %         hold on
-%         scatter3(marker_locs(1,end), marker_locs(2,end), marker_locs(3,end), 10, 'black', 'filled');
-%         norm(marker_locs(4:6,end)-current_state(1:3))
-% %         scatter3(marker_locs(4,end), marker_locs(5,end), marker_locs(6,end), 10, 'black', 'filled');
-% %         scatter3(marker_locs(7,end), marker_locs(8,end), marker_locs(9,end), 10, 'black', 'filled');
-% %         scatter3(marker_locs(10,end), marker_locs(11,end), marker_locs(12,end), 10, 'black', 'filled');
-% %         scatter3(marker_locs(14,end), marker_locs(15,end), marker_locs(15,end), 10, 'black', 'filled');
+%         scatter3(marker_locs(1, end), marker_locs(2, end), marker_locs(3, end), 5, 'black', 'filled')
+%         scatter3(marker_locs(4, end), marker_locs(5, end), marker_locs(6, end), 5, 'black', 'filled')
+%         scatter3(marker_locs(7, end), marker_locs(8, end), marker_locs(9, end), 5, 'black', 'filled')
+%         scatter3(marker_locs(10, end), marker_locs(11, end), marker_locs(12, end), 5, 'black', 'filled')
+%         scatter3(marker_locs(13, end), marker_locs(14, end), marker_locs(15, end), 5, 'black', 'filled')
+%         xlim([current_state(1)-.2 current_state(1)+.2])
+%         ylim([current_state(2)-.2 current_state(2)+.2])
+%         zlim([current_state(3)-.2 current_state(3)+.2])
 %         hold off
     end
     if i > length(statesMsgs)/1
@@ -52,22 +42,7 @@ for i = 1:length(statesMsgs)
 end
 time = (time)./1e9;
 disp("Everything in SI, angles in radians")
-% plot(time, states(1,:))
-% hold on
-% plot(time, target_states(1,:))
 
-% target_states = [];
-% time = [];
-% statesMsgs = readMessages(select(bag, 'Topic', '/lqr_controller/target_states'),'DataFormat','struct');
-% for i = 1:length(statesMsgs)
-%     current_state = statesMsgs(i);
-%     current_state = current_state{1};
-% %     states = [states current_state(1:12)];
-%     target_states = [target_states [current_state.Pose.Pose.Position.X; current_state.Pose.Pose.Position.Y; current_state.Pose.Pose.Position.Z]];
-%     time = [time current_state.Header.Stamp.Sec + current_state.Header.Stamp.Nsec/1e9 ];
-% end
-% time = (time);
-% plot(time, target_states(1,:))
 
 %% Prepping measurement data
 cam1loc = [10, 10, 10]';
@@ -80,13 +55,6 @@ y3 = vecnorm(states(1:3,:)-cam3loc);
 y4 = vecnorm(states(1:3,:)-cam4loc);
 
 %%
-% Baseball code
-% % Visualizing data
-% figure(1)
-% [plotx ploty plotz] = sph2cart(alpha, beta, rho);
-% scatter3(plotx, ploty, plotz, 10, 'm', 'filled')
-
-% My code
 % Visualizing data
 figure(1)
 scatter3(states(1,:), states(2,:), states(3,:), 10, 'm', 'filled')
@@ -97,76 +65,39 @@ scatter3(states(1,:), states(2,:), states(3,:), 10, 'm', 'filled')
 % scatter3(marker_locs(10,:), marker_locs(11,:), marker_locs(12,:), 5, 'k', 'filled')
 % scatter3(marker_locs(13,:), marker_locs(14,:), marker_locs(15,:), 5, 'k', 'filled')
 
-% Baseball code
-% % Initial Conditions
-% x_(:,1) = [0.4921 0.4921 2.0013 -26.2467 114.3051 65.9941]'/3.281;  
-% % x_(:,1) = [-0.6562; 0.9843; 1.4764;  -32.8084; 119.6219; 55.7806]/3.281;
-% P = diag([4 4 4 0.1 0.1 0.1])/3.281^2;
-% R = [(1.524)^2 0 0;
-%      0 (0.1*pi/180)^2 0;
-%      0 0 (0.1*pi/180)^2];      %the error covariance constant to be used
-% % Q = diag([0.5^2,0.5^2,0.5^2,0.01^2,0.01^2,0.01^2]);
-% Q = zeros(6);
-% M = eye(3); % COMBAK: is M eye(3) correct?
-
-% My code
 % Initial conditions
 x_(:,1) = states(:,1); % Using the first column from the data
 P = zeros(12); % COMBAK: perfect knowledge of initial state so zero
 Q = eye(12).*1e-7;
-R = eye(4).*.001; % COMBAK: need to change this later to fit the function
+R = eye(7).*(.001)^2; % COMBAK: need to change this later to fit the function, add radian error to this
 
 store_x = [x_(:,1)];
 store_P = [norm(diag(P))];
+1/(time(2)-time(1))
 for i =2:length(y1)
     dt = time(i) - time(i-1);
-%     Baseball code
-%   % Observed
-%   y_obs(:,i) = [rho(i); alpha(i); beta(i)];% + randn*sigmaw;
-%   My code
 %   Observed
-    y_obs(:,i) = [y1(i); y2(i); y3(i); y4(i)] + sqrt(diag(R)).*randn(size(diag(R)));
+    y_obs(:,i) = [y1(i); y2(i); y3(i); y4(i); states(7,i); states(8,i); states(9,i)] + sqrt(diag(R)).*randn(size(diag(R)));
   
-%     Baseball code
-%   % Propagation of state
-%   xhatdot = [x_(4,i-1) x_(5,i-1) x_(6,i-1)-g*dt 0 0 -g]';
-%   x_(:,i) = x_(:,i-1) + xhatdot*dt; % COMBAK: is rectangular integration ok?
-  
-%   My code
 %   Propagation of state
-    [t_out, y_out] = ode45(@(t,y) drone_dynamics(t, y, target_states(:,i-1), m, Ixx, Iyy, Izz, g), [0 dt], x_(:, i-1));
-%     x_(:,i) = propagate_state(x_(:,i-1), target_states(:,i-1), dt, m, Ixx, Iyy, Izz, g);
+    [t_out, y_out] = ode45(@(t,y) drone_dynamics(t, y, target_states(:,i-1), m, Ixx, Iyy, Izz, g), [0 dt], x_(:, i-1), odeset('RelTol',1e-2,'AbsTol',1e-4));
+
     x_(:,i) = y_out(end,:)';
-%     My code
+
     % Propagation of state covariance
     A = find_A(x_(:,i-1), m, Ixx, Iyy, Izz, g);
     Pdot = A*P + P*A' + Q; % + LQL' COMBAK: I didn't use Q here bc we weren't given one. OK?
     P = P + Pdot*dt;
   
-%     Baseball code
-%     % Assembling y_computed
-%     X_ = x_(1,end);
-%     Y_ = x_(2,end);
-%     Z_ = x_(3,end);
-%     rho_ = sqrt(X_^2 + Y_^2 + Z_^2);
-%     alpha_ = atan2(Y_, X_);
-%     beta_ = atan2(Z_, sqrt(X_^2 + Y_^2));
-%   
-%   y_comp(:,i) = [rho_; alpha_; beta_];
-
-%     My code
 %   Assembling y_comp
     y_comp(:,i) = [vecnorm(x_(1:3,end)-cam1loc);
                    vecnorm(x_(1:3,end)-cam2loc);
                    vecnorm(x_(1:3,end)-cam3loc);
-                   vecnorm(x_(1:3,end)-cam4loc)];
-%     Baseball code
-%   % Computing H using y_comp
-%   H = [X_/rho_ Y_/rho_ Z_/rho_ 0 0 0;
-%        (-Y_/X_^2)/(1 + (Y_/X_)^2) (1/X_)/(1+(Y_/X_)^2) 0 0 0 0;
-%        ((-X_*Z_)/(X_^2 + Y_^2)^(3/2))/(1+(Z_^2)/(X_^2 + Y_^2)) ((-Y_*Z_)/(X_^2 + Y_^2)^(3/2))/(1 + (Z_^2)/(X_^2 + Y_^2)) ((1)/(X_^2 + Y_^2)^(1/2))/(1 + (Z_^2)/(X_^2 + Y_^2)) 0 0 0];
+                   vecnorm(x_(1:3,end)-cam4loc);
+                   x_(7,end);
+                   x_(8,end);
+                   x_(9,end)];
 
-%   My code
 %   Computing H using y_comp
     X1 = cam1loc(1);
     Y1 = cam1loc(2);
@@ -183,19 +114,18 @@ for i =2:length(y1)
     drone_x = x_(1,end);
     drone_y = x_(2,end);
     drone_z = x_(3,end);
+%     H = [-(X1 - drone_x)/((X1 - drone_x)^2 + (Y1 - drone_y)^2 + (Z1 - drone_z)^2)^(1/2), -(Y1 - drone_y)/((X1 - drone_x)^2 + (Y1 - drone_y)^2 + (Z1 - drone_z)^2)^(1/2), -(Z1 - drone_z)/((X1 - drone_x)^2 + (Y1 - drone_y)^2 + (Z1 - drone_z)^2)^(1/2), 0, 0, 0, 0, 0, 0, 0, 0, 0;
+%          -(X2 - drone_x)/((X2 - drone_x)^2 + (Y2 - drone_y)^2 + (Z2 - drone_z)^2)^(1/2), -(Y2 - drone_y)/((X2 - drone_x)^2 + (Y2 - drone_y)^2 + (Z2 - drone_z)^2)^(1/2), -(Z2 - drone_z)/((X2 - drone_x)^2 + (Y2 - drone_y)^2 + (Z2 - drone_z)^2)^(1/2), 0, 0, 0, 0, 0, 0, 0, 0, 0;
+%          -(X3 - drone_x)/((X3 - drone_x)^2 + (Y3 - drone_y)^2 + (Z3 - drone_z)^2)^(1/2), -(Y3 - drone_y)/((X3 - drone_x)^2 + (Y3 - drone_y)^2 + (Z3 - drone_z)^2)^(1/2), -(Z3 - drone_z)/((X3 - drone_x)^2 + (Y3 - drone_y)^2 + (Z3 - drone_z)^2)^(1/2), 0, 0, 0, 0, 0, 0, 0, 0, 0;
+%          -(X4 - drone_x)/((X4 - drone_x)^2 + (Y4 - drone_y)^2 + (Z4 - drone_z)^2)^(1/2), -(Y4 - drone_y)/((X4 - drone_x)^2 + (Y4 - drone_y)^2 + (Z4 - drone_z)^2)^(1/2), -(Z4 - drone_z)/((X4 - drone_x)^2 + (Y4 - drone_y)^2 + (Z4 - drone_z)^2)^(1/2), 0, 0, 0, 0, 0, 0, 0, 0, 0];
     H = [-(X1 - drone_x)/((X1 - drone_x)^2 + (Y1 - drone_y)^2 + (Z1 - drone_z)^2)^(1/2), -(Y1 - drone_y)/((X1 - drone_x)^2 + (Y1 - drone_y)^2 + (Z1 - drone_z)^2)^(1/2), -(Z1 - drone_z)/((X1 - drone_x)^2 + (Y1 - drone_y)^2 + (Z1 - drone_z)^2)^(1/2), 0, 0, 0, 0, 0, 0, 0, 0, 0;
          -(X2 - drone_x)/((X2 - drone_x)^2 + (Y2 - drone_y)^2 + (Z2 - drone_z)^2)^(1/2), -(Y2 - drone_y)/((X2 - drone_x)^2 + (Y2 - drone_y)^2 + (Z2 - drone_z)^2)^(1/2), -(Z2 - drone_z)/((X2 - drone_x)^2 + (Y2 - drone_y)^2 + (Z2 - drone_z)^2)^(1/2), 0, 0, 0, 0, 0, 0, 0, 0, 0;
          -(X3 - drone_x)/((X3 - drone_x)^2 + (Y3 - drone_y)^2 + (Z3 - drone_z)^2)^(1/2), -(Y3 - drone_y)/((X3 - drone_x)^2 + (Y3 - drone_y)^2 + (Z3 - drone_z)^2)^(1/2), -(Z3 - drone_z)/((X3 - drone_x)^2 + (Y3 - drone_y)^2 + (Z3 - drone_z)^2)^(1/2), 0, 0, 0, 0, 0, 0, 0, 0, 0;
-         -(X4 - drone_x)/((X4 - drone_x)^2 + (Y4 - drone_y)^2 + (Z4 - drone_z)^2)^(1/2), -(Y4 - drone_y)/((X4 - drone_x)^2 + (Y4 - drone_y)^2 + (Z4 - drone_z)^2)^(1/2), -(Z4 - drone_z)/((X4 - drone_x)^2 + (Y4 - drone_y)^2 + (Z4 - drone_z)^2)^(1/2), 0, 0, 0, 0, 0, 0, 0, 0, 0];
- 
-% Baseball code
-    % Kalman gain
-%     K = P*H'*inv(H*P*H'+ R);
-%     % Measurement update
-%     x_(:,i) = x_(:,i) + K * (y_obs(:,i) - y_comp(:,i));
-%     P = (eye(6)-K*H)*P*(eye(6)-K*H)' + K*R*K';
+         -(X4 - drone_x)/((X4 - drone_x)^2 + (Y4 - drone_y)^2 + (Z4 - drone_z)^2)^(1/2), -(Y4 - drone_y)/((X4 - drone_x)^2 + (Y4 - drone_y)^2 + (Z4 - drone_z)^2)^(1/2), -(Z4 - drone_z)/((X4 - drone_x)^2 + (Y4 - drone_y)^2 + (Z4 - drone_z)^2)^(1/2), 0, 0, 0, 0, 0, 0, 0, 0, 0;
+         0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0;
+         0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0;
+         0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]; 
 
-%   My code
 %   Kalman gain
     K = P*H'*inv(H*P*H'+R);
     
@@ -389,7 +319,7 @@ function out = get_marker_locs(state)
     marker_5_loc = [0; -0.06; 0];
     R = [cos(pitch)*cos(yaw) cos(pitch)*sin(yaw) -sin(pitch);
          sin(roll)*sin(pitch)*cos(yaw)-cos(roll)*sin(yaw) sin(roll)*sin(pitch)*sin(yaw)+cos(roll)*cos(yaw) sin(roll)*cos(pitch);
-         cos(roll)*sin(pitch)*cos(yaw)+sin(roll)*sin(yaw) cos(roll)*sin(pitch)*sin(yaw)-sin(roll)*cos(yaw) cos(roll)*cos(pitch)];
+         cos(roll)*sin(pitch)*cos(yaw)+sin(roll)*sin(yaw) cos(roll)*sin(pitch)*sin(yaw)-sin(roll)*cos(yaw) cos(roll)*cos(pitch)]';
      out = [state(1:3) + R*marker_1_loc;
            state(1:3) + R*marker_2_loc;
            state(1:3) + R*marker_3_loc;
