@@ -1,0 +1,53 @@
+This is BibTeX, Version 0.99d
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: final_project.aux
+Reallocating 'name_of_file' (item size: 1) to 16 items.
+The style file: AAS_publication.bst
+Reallocating 'name_of_file' (item size: 1) to 11 items.
+Database file #1: references.bib
+Warning--empty author and editor in ViconMotionCaptureSpace
+Warning--empty year in ViconMotionCaptureSpace
+Warning--all relevant fields are empty in gazebo
+Warning--empty author and editor in style1959
+You've used 8 entries,
+            1928 wiz_defined-function locations,
+            521 strings with 4345 characters,
+and the built_in function-call counts, 1188 in all, are:
+= -- 93
+> -- 43
+< -- 0
++ -- 19
+- -- 11
+* -- 80
+:= -- 144
+add.period$ -- 7
+call.type$ -- 8
+change.case$ -- 1
+chr.to.int$ -- 0
+cite$ -- 12
+duplicate$ -- 55
+empty$ -- 163
+format.name$ -- 11
+if$ -- 300
+int.to.chr$ -- 0
+int.to.str$ -- 8
+missing$ -- 3
+newline$ -- 29
+num.names$ -- 2
+pop$ -- 42
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 50
+stack$ -- 0
+substring$ -- 24
+swap$ -- 9
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 4
+while$ -- 5
+width$ -- 9
+write$ -- 55
+(There were 4 warnings)

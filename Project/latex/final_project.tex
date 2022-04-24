@@ -9,14 +9,15 @@
 
 \usepackage{bm}
 \usepackage{amsmath}
-\usepackage{subfigure}
+\usepackage{subcaption}
+\usepackage{adjustbox}
 %\usepackage[notref,notcite]{showkeys}  % use this to temporarily show labels
 \usepackage[colorlinks=true, pdfstartview=FitV, linkcolor=black, citecolor= black, urlcolor= black]{hyperref}
 \usepackage{overcite}
 \usepackage{footnpag}			      	% make footnote symbols restart on each page
 
 
-
+\newcommand\scalemath[2]{\scalebox{#1}{\mbox{\ensuremath{\displaystyle #2}}}}
 
 \PaperNumber{XX-XXX}
 
@@ -34,13 +35,179 @@
 
 \begin{abstract}
 % TODO: come back at the end
-A motion capture system is generally used to estimate drone states in laboratory environments. For this setup, some reflective markers are attached to the drone, and multiple infrared cameras are positioned around the experiment area. The reflective markers' positions in space, along with their relative positions with respect to each other, are captured by the cameras, processed by software on the command center computer and are used to return the 3D position, velocities, and roll, pitch, and yaw of the drone. In this paper, the logic used by the software on the command center computer will be replicated. A system that uses multiple cameras (all with their own biases and noise) will be simulated to estimate the state of the drone.
+A motion capture system is generally used to estimate drone states in laboratory environments. For this setup, some reflective markers are attached to the drone, and multiple infrared cameras are positioned around the experiment area. The reflective markers' positions in space, along with their relative positions with respect to each other, are captured by the cameras, processed by software on the command center computer and are used to return the 3D position, velocities, and roll, pitch, and yaw of the drone. In this study, the logic used by the software on the command center computer will be replicated. A system that uses multiple cameras (all with their own biases and noise) will be simulated to estimate the state of the drone.
 \end{abstract}
 
 
 \section{Introduction}
-The American Astronautical Society (AAS) publishes bound sets of printed conference proceedings for personal, institutional, and library usage. The availability of hardcopy enhances the longevity of your work and elevates the importance of your conference contribution to professionals through archival publication. To preserve the consistency and quality of the proceedings, all authors adhere to the latest version of AAS conference proceedings format.
+Drones generally use GPS measurements to estimate their position and velocity, in conjunction with measurements from an IMU to get their roll, pitch, and yaw, and to increase the accuracy of their position and velocity measurements. In laboratory environments, the drones cannot use GPS data to complement other sensory inputes, so a motion capture system is generally used\cite{vicon_2022}. In such a system, a local origin is set, and the drone use that as the origin of its inertial frame of reference.
 
+In optical-passive motion capture, retroreflective markers are placed at various places on the drone. Multiple infrared cameras are positioned around the experiment area, and they capture the infrared light reflected back from the retroreflective markers at rates of around 240 Hz. Such high input frequency is important when testing out controllers, as a high number of samples would allow the controller to control better against sudden changes in the state of the system.
+
+
+\begin{figure}[htb]
+\centering
+\begin{subfigure}{.5\textwidth}
+	\centering
+	\includegraphics[width=0.9\textwidth]{Figures/ViconMotionCaptureSpace}
+	\caption{Example motion capture space setup\cite{ViconMotionCaptureSpace}}
+	\label{fig:ViconMotionCaptureSpace}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+	\centering
+	\includegraphics[width=0.9\textwidth]{Figures/MotionCaptureDrone}
+	\caption{Example drone with retroreflective markers\cite{MotionCaptureDrone}}
+	\label{fig:MotionCaptureDrone}
+\end{subfigure}
+\caption{Example setup that could be used if this study were to be repeated on real-life data}
+\label{fig:MotionCaptureExample}
+\end{figure}
+
+Most previous studies in drone state estimation have assumed constant inputs. In this study, a linear-quadratic regulator (LQR) controller will be used to find the inputs to the system's dynamics at every timestep, thereby increasing the types of flight paths that can be tracked. This study will use simulated motion capture system data to estimate the states of a drone in various flight patterns. The simulation will take place in a Gazebo 3D simulation environment\cite{gazebo}. A ROS (Robot Operating System)\cite{ros} package will be used to perform control and trajectory planning for the drone, and this log will be logged and will be run through an Extended Kalman filter (EKF) and an Unscented Kalman filter (UKF) in MATLAB to obtain an accurate estimate of the position of the drone. The performance of the filters for different flight paths will be analyzed.
+
+% TODO: The remainder of the paper is organized as follows.
+
+% TODO: come up with better names later
+\section{Simulation Setup}
+
+Data for this study was obtained through simulation. The drone chosen for this experiment was the 3DR Iris\cite{iris}, a model of which is available for use in Gazebo\cite{gazebo}. The Spatial Data File (SDF) of the Iris' model was edited to include four reflective markers. The positions of these markers can be seen in Table \ref{tab:DroneModel} and Figure \ref{fig:DroneModel}.
+
+\begin{table}[htbp]
+	\fontsize{10}{10}\selectfont
+    \caption{Positions of the reflective markers (in cm) with respect to the centroid of the drone}
+   \label{tab:DroneModel}
+        \centering 
+   \begin{tabular}{c | c | c | c} % Column formatting, 
+      \hline 
+      Marker Number    & x & y & z \\
+      \hline 
+      1      & 10.5 & 0 & 0 \\
+      2      & 0 & 6.0 & 0 \\
+      3      & -11.5 & 0 & 0 \\
+      4      & 0 & -6.0 & 0 \\
+      \hline
+   \end{tabular}
+\end{table}
+
+\begin{figure}[htb]
+	\centering\includegraphics[width=5in]{Figures/DroneModel}
+	\caption{Right and left views of the drone that will be used for simulation}
+	\label{fig:DroneModel}
+\end{figure}
+
+A world with four infrared cameras was then created in Gazebo, the coordinates of which can be seen in Table \ref{tab:cameras}. Figure \ref{fig:GazeboWorld} shows the setup of the environment. The distance from these cameras to reflective markers on the drone was measured at the rate of approximately !!!! Hz. Figure \ref{fig:DroneModel} shows the positions of reflective markers on the drone. 
+
+% TODO: add more cameras
+
+\begin{table}[htbp]
+	\fontsize{10}{10}\selectfont
+    \caption{Coordinates of the cameras in m}
+   \label{tab:cameras}
+        \centering 
+   \begin{tabular}{c | c | c | c} % Column formatting, 
+      \hline 
+      Camera ID    & x & y & z \\
+      \hline 
+      1      & 10 & 10 & 10 \\
+      2      & -10 & 10 & 10 \\
+      3      & -10 & -10 & 10 \\
+      4      & 10 & -10 & 10 \\
+      \hline
+   \end{tabular}
+\end{table}
+
+\begin{figure}[htb]
+	\centering\includegraphics[width=3.5in]{Figures/GazeboWorld}
+	\caption{The Gazebo world that the simulation will take place in. Each square has a side length of 1m. Thus, the entire world is 10m $\times$ 10m $\times$ 10m}
+	\label{fig:GazeboWorld}
+\end{figure}
+
+\section{Filter Setup}
+
+Eq. \eqref{eq:X} shows the states that were to be observed for the filter, where $x$, $y$, and $z$ are the $x$, $y$, and $z$ positions of the drone, $v_x$, $v_y$, and $v_z$ are the $x$, $y$, and $z$ velocities of the drone, $\phi$, $\theta$, and $\psi$ are the roll, pitch, yaw of the drone, and $p$, $q$, and $r$ are the body angular velocities in terms of Euler angles and Euler rates. 
+\begin{equation}
+	\label{eq:X}
+	X = \begin{bmatrix}
+		x & y & z & v_x & v_y & v_z & \phi & \theta & \psi
+\end{bmatrix}^T
+\end{equation}
+
+Taking the time derivative of Eq. \eqref{eq:X} gives Eq. \eqref{eq:Xdot}, where $u_3$ through $u_6$ are the thrust inputs, and roll, pitch, yaw torques on the drone respectively.
+
+\begin{equation}
+	\label{eq:Xdot}
+	\dot{X} = F = \begin{bmatrix}
+		\dot{x} \\ \dot{y} \\ \dot{z} \\ \dot{v_x} \\ \dot{v_y} \\ \dot{v_z} \\ \dot{\phi} \\ \dot{\theta} \\ \dot{\psi}
+\end{bmatrix} =  \begin{bmatrix}
+v_x \\
+v_y \\
+v_z \\
+(u_3(\sin(\phi)\sin(\psi) + \cos(\phi)\cos(\psi)\sin(\theta))/m \\
+(-u_3(\cos(\psi)\sin(\phi) + \cos(\phi)\sin(\theta)\sin(\psi))/m \\
+(u_3\cos(\theta)\cos(\phi) - mg)/m \\
+p + r\cos(\phi)\tan(\theta) + q\tan(\theta)\sin(\phi) \\
+q\cos(\phi) - r\sin(\phi) \\
+\frac{r\cos(\phi)}{\cos(\theta)} + \frac{q\sin(\phi)}{\cos(\theta)} \\
+\frac{u_4 + qrI_{yy} - qrI_{zz}}{I_{xx}} \\
+\frac{u_5 - prI_{xx} + prI_{zz}}{I_{yy}} \\
+\frac{u_6 + qpI_{xx} - qpI_{yy}}{I_{zz}} \\
+\end{bmatrix}
+\end{equation}
+
+Taking the partial of $F$ with respect to $X$ gives Eq. \eqref{eq:A}.
+\begin{equation}
+\label{eq:A}
+A = \frac{\partial F}{\partial X} = 
+\begin{bmatrix} 
+    \frac{\partial F_1}{\partial x} & \dots  & \frac{\partial F_1}{\partial r}\\
+    \vdots & \ddots & \vdots\\
+    \frac{\partial F_{12}}{\partial x} & \dots  & \frac{\partial F_{12}}{\partial r} 
+\end{bmatrix}
+\end{equation}
+
+\tiny
+\setcounter{MaxMatrixCols}{12}
+\begin{equation}
+A = \begin{bmatrix}
+0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & (u_3(c(q_7)s(q_9) - c(q_9)s(q_7)s(q_8))) / m & (u_3c(q_7)c(q_8)c(q_9)) / m & (u_3(c(q_9)s(q_7) - c(q_7)s(q_8)s(q_9))) / m & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & -(u_3(c(q_7)c(q_9) + s(q_7)s(q_8)s(q_9))) / m & (u_3c(q_7)c(q_8)s(q_9)) / m & (u_3(s(q_7)s(q_9) + c(q_7)c(q_9)s(q_8))) / m & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & -(u_3c(q_8)s(q_7)) / m & -(u_3c(q_7)s(q_8)) / m & 0 & 0 & 0 & 0 \\
+0 & 0 & 0 & 0 & 0 & 0 & q_{11}c(q_7)t(q_8) - q_{12}s(q_7)t(q_8) & q_{12}c(q_7)(t(q_8)^2 + 1) + q_{11}s(q_7)(t(q_8)^2 + 1) & 0 & 1 & s(q_7)t(q_8) & c(q_7)t(q_8) \\
+0 & 0 & 0 & 0 & 0 & 0 & -q_{12}c(q_7) - q_{11}s(q_7) & 0 & 0 & 0 & c(q_7) & -s(q_7) \\
+0 & 0 & 0 & 0 & 0 & 0 & (q_{11}c(q_7)) / c(q_8) - (q_{12}s(q_7)) / c(q_8) &  (q_{12}c(q_7)s(q_8)) / c(q_8)^2 + (q_{11}s(q_7)s(q_8)) / c(q_8)^2 & 0 & 0 & s(q_7) / c(q_8) & c(q_7) / c(q_8) \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & (I_{yy}q_{12} - I_{zz}q_{12}) / I_{xx} & (I_{yy}q_{11} - I_{zz}q_{11}) / I_{xx} \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & -(I_{xx}q_{12} - I_{zz}q_{12}) / I_{yy} & 0 & -(I_{xx}q_{10} - I_{zz}q_{10}) / I_{yy} \\
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & (I_{xx}q_{11} - I_{yy}q_{11}) / I_{zz} & (I_{xx}q_{10} - I_{yy}q_{10}) / I_{zz} & 0
+\end{bmatrix}
+\end{equation}
+\normalsize
+% COMBAK: can't fit the entire matrix
+
+The distance from the camera to the centroid of the drone was measured by each of the infrared cameras, and roll, pitch, yaw measurements of the drone would directly be measured using the IMU. Thus, the measurement model was formulated as in Eq. \ref{eq:y}.
+
+% TODO input y
+
+% WHY DO WE FIND H, G y confuse panni solrene
+
+The H matrix was found by taking partial of the measurement model with respect to $X$.
+
+\begin{equation}
+\label{eq:H}
+H = \frac{\partial G}{\partial X} =
+\begin{bmatrix}
+	\frac{\partial y_1}{\partial x} & \dots  & \frac{\partial y_1}{\partial r}\\
+    \vdots & \ddots & \vdots\\
+    \frac{\partial y_{!!!}}{\partial x} & \dots  & \frac{\partial y_{!!!}}{\partial r}
+TODO
+\end{bmatrix}
+\end{equation}
+
+Using this setup, an Extended Kalman filter and an Unscented Kalman filter were implemented. 
+
+The American Astronautical Society (AAS) publishes bound sets of printed conference proceedings for personal, institutional, and library usage. The availability of hardcopy enhances the longevity of your work and elevates the importance of your conference contribution to professionals through archival publication. To preserve the consistency and quality of the proceedings, all authors adhere to the latest version of AAS conference proceedings format.
 
 This document is intended to serve as a visual and instructional guide, and as a \LaTeX\ document template, for the AAS conference proceedings format. This template provides the basic font sizes, styles, and margins required by the publisher's formatting instructions.   There are also styles for centered equations, figure and table captions, section and sub-section headings, footnote text, \emph{etc}. This template provides samples of their usage.  To use this document as a template, simply copy and change its contents with your own information while maintaining the required predefined style, rather than starting anew. Since this is not a tutorial on how to use \LaTeX\, refer to \LaTeX\ manuals for more information.
 

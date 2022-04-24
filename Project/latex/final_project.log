@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.23 (MiKTeX 21.10) (preloaded format=pdflatex 2021.11.23)  20 APR 2022 09:57
+This is pdfTeX, Version 3.141592653-2.6-1.40.23 (MiKTeX 21.10) (preloaded format=pdflatex 2021.11.23)  24 APR 2022 14:01
 entering extended mode
 **./final_project.tex
 (final_project.tex
@@ -154,27 +154,93 @@ LaTeX Font Info:    Redeclaring font encoding OMS on input line 744.
 LaTeX Info: Redefining \[ on input line 2938.
 LaTeX Info: Redefining \] on input line 2939.
 )
-(C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/subfigure\subfigure.sty
-Package: subfigure 2002/07/30 v2.1.4 subfigure package
-\subfigtopskip=\skip61
-\subfigcapskip=\skip62
-\subfigcaptopadj=\dimen156
-\subfigbottomskip=\skip63
-\subfigcapmargin=\dimen157
-\subfiglabelskip=\skip64
-\c@subfigure=\count269
-\c@lofdepth=\count270
-\c@subtable=\count271
-\c@lotdepth=\count272
-****************************************
-* Local config file subfigure.cfg used *
-****************************************
+(C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/caption\subcaption.sty
+Package: subcaption 2020/10/07 v1.3j Sub-captions (AR)
 
-(C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/subfigure\subfigure.cfg
+(C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption.sty
+Package: caption 2020/10/26 v3.5g Customizing captions (AR)
+
+(C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption3.sty
+Package: caption3 2020/10/21 v2.2e caption3 kernel (AR)
+\captionmargin=\dimen156
+\captionmargin@=\dimen157
+\captionwidth=\dimen158
+\caption@tempdima=\dimen159
+\caption@indent=\dimen160
+\caption@parindent=\dimen161
+\caption@hangindent=\dimen162
+Package caption Info: Unknown document class (or package),
+(caption)             standard defaults will be used.
+Package caption Info: \@makecaption = \long macro:#1#2->\vskip \abovecaptionski
+p \sbox \@tempboxa {\normalfont \fontsize {10}{10}\selectfont #1. \nobreakspace
+ #2}\ifdim \wd \@tempboxa >\hsize \normalfont \fontsize {10}{10}\selectfont #1.
+ \nobreakspace #2\else \global \@minipagefalse \hb@xt@ \hsize {\hfil \box \@tem
+pboxa \hfil }\fi \vskip \belowcaptionskip  on input line 1139.
 )
-\subfig@top=\skip65
-\subfig@bottom=\skip66
+
+Package caption Warning: Unknown document class (or package),
+(caption)                standard defaults will be used.
+See the caption package documentation for explanation.
+
+\c@caption@flags=\count269
+\c@continuedfloat=\count270
 )
+\c@subfigure=\count271
+\c@subtable=\count272
+)
+(C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/adjustbox\adjustbox.sty
+Package: adjustbox 2020/08/19 v1.3 Adjusting TeX boxes (trim, clip, ...)
+(C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/xkeyval\xkeyval.sty
+Package: xkeyval 2020/11/20 v2.8 package option processing (HA)
+
+(C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/generic/xkeyval\xkeyval.tex
+(C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/generic/xkeyval\xkvutils.tex
+\XKV@toks=\toks22
+\XKV@tempa@toks=\toks23
+)
+\XKV@depth=\count273
+File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
+))
+(C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/adjustbox\adjcalc.sty
+Package: adjcalc 2012/05/16 v1.1 Provides advanced setlength with multiple back
+-ends (calc, etex, pgfmath)
+)
+(C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/adjustbox\trimclip.sty
+Package: trimclip 2020/08/19 v1.2 Trim and clip general TeX material
+
+(C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/collectbox\collectbox.s
+ty
+Package: collectbox 2012/05/17 v0.4b Collect macro arguments as boxes
+\collectedbox=\box52
+)
+\tc@llx=\dimen163
+\tc@lly=\dimen164
+\tc@urx=\dimen165
+\tc@ury=\dimen166
+Package trimclip Info: Using driver 'tc-pdftex.def'.
+
+(C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/adjustbox\tc-pdftex.def
+File: tc-pdftex.def 2019/01/04 v2.2 Clipping driver for pdftex
+))
+\adjbox@Width=\dimen167
+\adjbox@Height=\dimen168
+\adjbox@Depth=\dimen169
+\adjbox@Totalheight=\dimen170
+\adjbox@pwidth=\dimen171
+\adjbox@pheight=\dimen172
+\adjbox@pdepth=\dimen173
+\adjbox@ptotalheight=\dimen174
+
+(C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/ifoddpage\ifoddpage.sty
+Package: ifoddpage 2016/04/23 v1.1 Conditionals for odd/even page detection
+\c@checkoddpage=\count274
+) (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/varwidth\varwidth.sty
+Package: varwidth 2009/03/30 ver 0.92;  Variable-width minipages
+\@vwid@box=\box53
+\sift@deathcycles=\count275
+\@vwid@loff=\dimen175
+\@vwid@roff=\dimen176
+))
 (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
 Package: hyperref 2021-06-07 v7.00m Hypertext links for LaTeX
 
@@ -221,9 +287,9 @@ Package: auxhook 2019-12-17 v1.6 Hooks for auxiliary files (HO)
 (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
 Package: kvoptions 2020-10-07 v3.14 Key value format for package options (HO)
 )
-\@linkdim=\dimen158
-\Hy@linkcounter=\count273
-\Hy@pagecounter=\count274
+\@linkdim=\dimen177
+\Hy@linkcounter=\count276
+\Hy@pagecounter=\count277
  (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
 File: pd1enc.def 2021-06-07 v7.00m Hyperref: PDFDocEncoding definition (HO)
 Now handling font encoding PD1 ...
@@ -240,7 +306,7 @@ Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
 (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/generic/etexcmds\etexcmds.sty
 Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
 )
-\Hy@SavedSpaceFactor=\count275
+\Hy@SavedSpaceFactor=\count278
  (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def
 File: puenc.def 2021-06-07 v7.00m Hyperref: PDF Unicode definition (HO)
 Now handling font encoding PU ...
@@ -254,14 +320,14 @@ Package hyperref Info: Plain pages OFF on input line 4207.
 Package hyperref Info: Backreferencing OFF on input line 4212.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
 Package hyperref Info: Bookmarks ON on input line 4445.
-\c@Hy@tempcnt=\count276
+\c@Hy@tempcnt=\count279
 
 (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty
 \Urlmuskip=\muskip17
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
 LaTeX Info: Redefining \url on input line 4804.
-\XeTeXLinkMargin=\dimen159
+\XeTeXLinkMargin=\dimen178
 
 (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
 Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
@@ -271,9 +337,9 @@ Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
 Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
 )
 ))
-\Fld@menulength=\count277
-\Field@Width=\dimen160
-\Fld@charsize=\dimen161
+\Fld@menulength=\count280
+\Field@Width=\dimen179
+\Fld@charsize=\dimen180
 Package hyperref Info: Hyper figures OFF on input line 6076.
 Package hyperref Info: Link nesting OFF on input line 6081.
 Package hyperref Info: Hyper index ON on input line 6084.
@@ -288,9 +354,9 @@ LaTeX Info: Redefining \pageref on input line 6150.
 Package: atbegshi-ltx 2021/01/10 v1.0c Emulation of the original atbegshi
 package with kernel methods
 )
-\Hy@abspage=\count278
-\c@Item=\count279
-\c@Hfootnote=\count280
+\Hy@abspage=\count281
+\c@Item=\count282
+\c@Hfootnote=\count283
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
 (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
@@ -301,8 +367,8 @@ Package: atveryend-ltx 2020/08/19 v1.0a Emulation of the original atveryend pac
 kage
 with kernel methods
 )
-\Fld@listcount=\count281
-\c@bookmark@seq@number=\count282
+\Fld@listcount=\count284
+\c@bookmark@seq@number=\count285
 
 (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfil
 echeck.sty
@@ -315,7 +381,7 @@ Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
 Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 86.
 )
-\Hy@SectionHShift=\skip67
+\Hy@SectionHShift=\skip61
 )
 (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/cite\overcite.sty
 Package: overcite 2003/05/27  v 4.0
@@ -330,10 +396,10 @@ LaTeX Info: Redefining \cite on input line 441.
 Package: footnpag 1995/11/10 v2.6 numbering footnotes per page
 \old_foot_file=\read2
 \foot_file=\write3
-\foot_name_no=\count283
+\foot_name_no=\count286
 )
 LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 2
-5.
+6.
 
 (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
@@ -341,8 +407,8 @@ File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
 tex.def
 File: l3backend-pdftex.def 2021-10-18 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count284
-\l__pdf_internal_box=\box52
+\l__color_backend_stack_int=\count287
+\l__pdf_internal_box=\box54
 )
 
 LaTeX Warning: Unused global option(s):
@@ -351,39 +417,39 @@ LaTeX Warning: Unused global option(s):
 (final_project.aux)
 \openout1 = `final_project.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 25.
-LaTeX Font Info:    ... okay on input line 25.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 26.
+LaTeX Font Info:    ... okay on input line 26.
 
 (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
 ii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count285
-\scratchdimen=\dimen162
-\scratchbox=\box53
-\nofMPsegments=\count286
-\nofMParguments=\count287
-\everyMPshowfont=\toks22
-\MPscratchCnt=\count288
-\MPscratchDim=\dimen163
-\MPnumerator=\count289
-\makeMPintoPDFobject=\count290
-\everyMPtoPDFconversion=\toks23
+\scratchcounter=\count288
+\scratchdimen=\dimen181
+\scratchbox=\box55
+\nofMPsegments=\count289
+\nofMParguments=\count290
+\everyMPshowfont=\toks24
+\MPscratchCnt=\count291
+\MPscratchDim=\dimen182
+\MPnumerator=\count292
+\makeMPintoPDFobject=\count293
+\everyMPtoPDFconversion=\toks25
 )
 (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
 ase.sty
@@ -395,7 +461,10 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 fg
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
-Package hyperref Info: Link coloring ON on input line 25.
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: hyperref package is loaded.
+Package caption Info: End \AtBeginDocument code.
+Package hyperref Info: Link coloring ON on input line 26.
 
 (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
 Package: nameref 2021-04-02 v2.47 Cross-referencing by name of section
@@ -407,131 +476,163 @@ Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
 lestring.sty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
-\c@section@level=\count291
+\c@section@level=\count294
 )
-LaTeX Info: Redefining \ref on input line 25.
-LaTeX Info: Redefining \pageref on input line 25.
-LaTeX Info: Redefining \nameref on input line 25.
+LaTeX Info: Redefining \ref on input line 26.
+LaTeX Info: Redefining \pageref on input line 26.
+LaTeX Info: Redefining \nameref on input line 26.
  (final_project.out) (final_project.out)
 \@outlinefile=\write4
 \openout4 = `final_project.out'.
 
 LaTeX Font Info:    Trying to load font information for OT1+phv on input line 3
-2.
+3.
 
 (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1phv.fd
 File: ot1phv.fd 2020/03/25 scalable font definitions for OT1/phv.
 )
 LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 3
-2.
+3.
 
 (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )
+<Figures/ViconMotionCaptureSpace.jpg, id=64, 534.99875pt x 401.5pt>
+File: Figures/ViconMotionCaptureSpace.jpg Graphic file (type jpg)
+<use Figures/ViconMotionCaptureSpace.jpg>
+Package pdftex.def Info: Figures/ViconMotionCaptureSpace.jpg  used on input lin
+e 52.
+(pdftex.def)             Requested size: 195.12767pt x 146.43906pt.
+<Figures/MotionCaptureDrone.jpg, id=67, 1027.84pt x 730.73pt>
+File: Figures/MotionCaptureDrone.jpg Graphic file (type jpg)
+<use Figures/MotionCaptureDrone.jpg>
+Package pdftex.def Info: Figures/MotionCaptureDrone.jpg  used on input line 58.
+
+(pdftex.def)             Requested size: 195.12767pt x 138.71748pt.
+
 [1
 
 {C:/Users/kadhi/AppData/Local/MiKTeX/pdftex/config/pdftex.map}]
-LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 5
-2.
+<Figures/DroneModel.png, id=88, 2543.5025pt x 708.6475pt>
+File: Figures/DroneModel.png Graphic file (type png)
+<use Figures/DroneModel.png>
+Package pdftex.def Info: Figures/DroneModel.png  used on input line 93.
+(pdftex.def)             Requested size: 361.34999pt x 100.66974pt.
+<Figures/GazeboWorld.png, id=93, 1144.275pt x 900.36375pt>
+File: Figures/GazeboWorld.png Graphic file (type png)
+<use Figures/GazeboWorld.png>
+Package pdftex.def Info: Figures/GazeboWorld.png  used on input line 120.
+(pdftex.def)             Requested size: 252.94499pt x 199.02858pt.
+ [2 <./Figures/ViconMotionCaptureSpace.jpg> <./Figures/MotionCaptureDrone.jpg> 
+<./Figures/DroneModel.png>] [3 <./Figures/GazeboWorld.png>]
+Overfull \hbox (364.71088pt too wide) detected at line 185
+[][]\OML/cmm/m/it/6 A \OT1/cmr/m/n/6 = []
+ []
 
-(C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1pcr.fd
+
+LaTeX Warning: Reference `eq:y' on page 4 undefined on input line 189.
+
+[4]
+LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 2
+19.
+ (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
-LaTeX Font Info:    Trying to load font information for OMS+pcr on input line 5
-2.
+LaTeX Font Info:    Trying to load font information for OMS+pcr on input line 2
+19.
 
 (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omspcr.fd
 File: omspcr.fd 
 )
 LaTeX Font Info:    Font shape `OMS/pcr/m/n' in size <10.95> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 52.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 219.
 
 (final_project.fot)
 \openout3 = `final_project.fot'.
 
-<Figures/test.pdf, id=67, 255.95625pt x 187.70125pt>
+<Figures/test.pdf, id=141, 255.95625pt x 187.70125pt>
 File: Figures/test.pdf Graphic file (type pdf)
 <use Figures/test.pdf>
-Package pdftex.def Info: Figures/test.pdf  used on input line 81.
+Package pdftex.def Info: Figures/test.pdf  used on input line 248.
 (pdftex.def)             Requested size: 252.94499pt x 185.49257pt.
- [2]
-Overfull \hbox (7.08975pt too wide) in paragraph at lines 91--92
+ [5]
+Overfull \hbox (7.08975pt too wide) in paragraph at lines 258--259
 [] []\OT1/ptm/m/it/10.95 Graphic For-mats.[][] \OT1/ptm/m/n/10.95 The high-est 
 qual-ity for-mats are En-cap-su-lated PostScript (EPS) and PDF vector-
  []
 
 
-LaTeX Warning: Citation `doe2005' on page 3 undefined on input line 95.
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
-
-LaTeX Warning: Citation `style1959' on page 3 undefined on input line 95.
-
-
-LaTeX Warning: Citation `doe2005' on page 3 undefined on input line 95.
-
-
-LaTeX Warning: Citation `doe2005' on page 3 undefined on input line 95.
-
-
-LaTeX Warning: Citation `style1959' on page 3 undefined on input line 95.
-
-
-Underfull \vbox (badness 1596) has occurred while \output is active []
-
- [3 <./Figures/test.pdf>] [4]
-Underfull \hbox (badness 10000) in paragraph at lines 148--152
+ [6 <./Figures/test.pdf>] [7]
+Underfull \hbox (badness 10000) in paragraph at lines 315--319
 
  []
 
-No file final_project.bbl.
-[5] (final_project.aux)
+(final_project.bbl [8]) [9] (final_project.aux)
 
 LaTeX Warning: There were undefined references.
 
 Package rerunfilecheck Info: File `final_project.out' has not changed.
-(rerunfilecheck)             Checksum: 3289C6B8188CEB3C5FB39E9B5B521627;1989.
+(rerunfilecheck)             Checksum: C1473F511138A4E8F02B671A217045EC;2238.
  ) 
 Here is how much of TeX's memory you used:
- 9959 strings out of 478699
- 158872 string characters out of 2846961
- 455561 words of memory out of 3000000
- 27823 multiletter control sequences out of 15000+600000
- 440487 words of font info for 108 fonts, out of 8000000 for 9000
+ 12330 strings out of 478699
+ 205581 string characters out of 2846961
+ 511580 words of memory out of 3000000
+ 30125 multiletter control sequences out of 15000+600000
+ 442130 words of font info for 110 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 70i,12n,76p,1429b,365s stack positions out of 5000i,500n,10000p,200000b,80000s
-pdfTeX warning (dest): name{section*.13} has been referenced but does not exi
+ 70i,12n,77p,1429b,679s stack positions out of 5000i,500n,10000p,200000b,80000s
+pdfTeX warning (dest): name{section*.22} has been referenced but does not exi
 st, replaced by a fixed one
 
-pdfTeX warning (dest): name{section*.12} has been referenced but does not exist
+pdfTeX warning (dest): name{section*.21} has been referenced but does not exist
 , replaced by a fixed one
 
-pdfTeX warning (dest): name{section*.11} has been referenced but does not exist
+pdfTeX warning (dest): name{section*.20} has been referenced but does not exist
+, replaced by a fixed one
+
+pdfTeX warning (dest): name{section*.18} has been referenced but does not exist
 , replaced by a fixed one
 
 pdfTeX warning (dest): name{section*.9} has been referenced but does not exist,
  replaced by a fixed one
 
-pdfTeX warning (dest): name{section*.2} has been referenced but does not exist,
+pdfTeX warning (dest): name{section*.8} has been referenced but does not exist,
+ replaced by a fixed one
+
+pdfTeX warning (dest): name{section*.3} has been referenced but does not exist,
  replaced by a fixed one
 
 pdfTeX warning (dest): name{section*.1} has been referenced but does not exist,
  replaced by a fixed one
 
 {C:/Users/kadhi/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc}<C:/U
-sers/kadhi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.
+sers/kadhi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.
 pfb><C:/Users/kadhi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/c
-m/cmr10.pfb><C:/Users/kadhi/AppData/Local/Programs/MiKTeX/fonts/type1/public/am
-sfonts/cm/cmr8.pfb><C:/Users/kadhi/AppData/Local/Programs/MiKTeX/fonts/type1/pu
-blic/amsfonts/cm/cmsy10.pfb><C:/Users/kadhi/AppData/Local/Programs/MiKTeX/fonts
-/type1/public/amsfonts/cm/cmsy9.pfb><C:/Users/kadhi/AppData/Local/Programs/MiKT
-eX/fonts/type1/urw/courier/ucrr8a.pfb><C:/Users/kadhi/AppData/Local/Programs/Mi
-KTeX/fonts/type1/urw/helvetic/uhvb8a.pfb><C:/Users/kadhi/AppData/Local/Programs
-/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/kadhi/AppData/Local/Programs
-/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/kadhi/AppData/Local/Programs
-/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on final_project.pdf (5 pages, 164125 bytes).
+mextra/cmex7.pfb><C:/Users/kadhi/AppData/Local/Programs/MiKTeX/fonts/type1/publ
+ic/amsfonts/cm/cmmi10.pfb><C:/Users/kadhi/AppData/Local/Programs/MiKTeX/fonts/t
+ype1/public/amsfonts/cm/cmmi5.pfb><C:/Users/kadhi/AppData/Local/Programs/MiKTeX
+/fonts/type1/public/amsfonts/cm/cmmi6.pfb><C:/Users/kadhi/AppData/Local/Program
+s/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/kadhi/AppData/Local
+/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/kadhi/AppDa
+ta/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr5.pfb><C:/Users/kadh
+i/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Use
+rs/kadhi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb>
+<C:/Users/kadhi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cm
+sy10.pfb><C:/Users/kadhi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfo
+nts/cm/cmsy6.pfb><C:/Users/kadhi/AppData/Local/Programs/MiKTeX/fonts/type1/publ
+ic/amsfonts/cm/cmsy8.pfb><C:/Users/kadhi/AppData/Local/Programs/MiKTeX/fonts/ty
+pe1/public/amsfonts/cm/cmsy9.pfb><C:/Users/kadhi/AppData/Local/Programs/MiKTeX/
+fonts/type1/urw/courier/ucrr8a.pfb><C:/Users/kadhi/AppData/Local/Programs/MiKTe
+X/fonts/type1/urw/helvetic/uhvb8a.pfb><C:/Users/kadhi/AppData/Local/Programs/Mi
+KTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/kadhi/AppData/Local/Programs/Mi
+KTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/kadhi/AppData/Local/Programs/Mi
+KTeX/fonts/type1/urw/times/utmri8a.pfb>
+Output written on final_project.pdf (9 pages, 654764 bytes).
 PDF statistics:
- 174 PDF objects out of 1000 (max. 8388607)
- 28 named destinations out of 1000 (max. 500000)
- 110 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 299 PDF objects out of 1000 (max. 8388607)
+ 52 named destinations out of 1000 (max. 500000)
+ 146 words of extra memory for PDF output out of 10000 (max. 10000000)
 
