@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.23 (MiKTeX 21.10) (preloaded format=pdflatex 2021.11.23)  24 APR 2022 14:01
+This is pdfTeX, Version 3.141592653-2.6-1.40.23 (MiKTeX 21.10) (preloaded format=pdflatex 2021.11.23)  26 APR 2022 18:42
 entering extended mode
 **./final_project.tex
 (final_project.tex
@@ -241,9 +241,47 @@ Package: varwidth 2009/03/30 ver 0.92;  Variable-width minipages
 \@vwid@loff=\dimen175
 \@vwid@roff=\dimen176
 ))
-(C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
-Package: hyperref 2021-06-07 v7.00m Hypertext links for LaTeX
+(C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithm.st
+y
+Package: algorithm 2009/08/24 v0.1 Document Style `algorithm' - floating enviro
+nment
+ (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/float\float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count276
+\float@exts=\toks24
+\float@box=\box54
+\@float@everytoks=\toks25
+\@floatcapt=\box55
+)
+(C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/base\ifthen.sty
+Package: ifthen 2020/11/24 v1.1c Standard LaTeX ifthen package (DPC)
+)
+\@float@every@algorithm=\toks26
+\c@algorithm=\count277
+)
+(C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/algorithmicx\algpseudoc
+ode.sty
+Package: algpseudocode 
 
+(C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/algorithmicx\algorithmi
+cx.sty
+Package: algorithmicx 2005/04/27 v1.2 Algorithmicx
+
+Document Style algorithmicx 1.2 - a greatly improved `algorithmic' style
+\c@ALG@line=\count278
+\c@ALG@rem=\count279
+\c@ALG@nested=\count280
+\ALG@tlm=\skip61
+\ALG@thistlm=\skip62
+\c@ALG@Lnr=\count281
+\c@ALG@blocknr=\count282
+\c@ALG@storecount=\count283
+\c@ALG@tmpcounter=\count284
+\ALG@tmplength=\skip63
+)
+Document Style - pseudocode environments for use with the `algorithmicx' style
+) (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
+Package: hyperref 2021-06-07 v7.00m Hypertext links for LaTeX
 (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty
 Package: ltxcmds 2020-05-10 v1.25 LaTeX kernel commands for general use (HO)
 )
@@ -288,8 +326,8 @@ Package: auxhook 2019-12-17 v1.6 Hooks for auxiliary files (HO)
 Package: kvoptions 2020-10-07 v3.14 Key value format for package options (HO)
 )
 \@linkdim=\dimen177
-\Hy@linkcounter=\count276
-\Hy@pagecounter=\count277
+\Hy@linkcounter=\count285
+\Hy@pagecounter=\count286
  (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
 File: pd1enc.def 2021-06-07 v7.00m Hyperref: PDFDocEncoding definition (HO)
 Now handling font encoding PD1 ...
@@ -306,7 +344,7 @@ Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
 (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/generic/etexcmds\etexcmds.sty
 Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
 )
-\Hy@SavedSpaceFactor=\count278
+\Hy@SavedSpaceFactor=\count287
  (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def
 File: puenc.def 2021-06-07 v7.00m Hyperref: PDF Unicode definition (HO)
 Now handling font encoding PU ...
@@ -320,7 +358,7 @@ Package hyperref Info: Plain pages OFF on input line 4207.
 Package hyperref Info: Backreferencing OFF on input line 4212.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
 Package hyperref Info: Bookmarks ON on input line 4445.
-\c@Hy@tempcnt=\count279
+\c@Hy@tempcnt=\count288
 
 (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty
 \Urlmuskip=\muskip17
@@ -337,7 +375,7 @@ Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
 Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
 )
 ))
-\Fld@menulength=\count280
+\Fld@menulength=\count289
 \Field@Width=\dimen179
 \Fld@charsize=\dimen180
 Package hyperref Info: Hyper figures OFF on input line 6076.
@@ -354,9 +392,9 @@ LaTeX Info: Redefining \pageref on input line 6150.
 Package: atbegshi-ltx 2021/01/10 v1.0c Emulation of the original atbegshi
 package with kernel methods
 )
-\Hy@abspage=\count281
-\c@Item=\count282
-\c@Hfootnote=\count283
+\Hy@abspage=\count290
+\c@Item=\count291
+\c@Hfootnote=\count292
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
 (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
@@ -367,8 +405,8 @@ Package: atveryend-ltx 2020/08/19 v1.0a Emulation of the original atveryend pac
 kage
 with kernel methods
 )
-\Fld@listcount=\count284
-\c@bookmark@seq@number=\count285
+\Fld@listcount=\count293
+\c@bookmark@seq@number=\count294
 
 (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfil
 echeck.sty
@@ -381,7 +419,7 @@ Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
 Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 86.
 )
-\Hy@SectionHShift=\skip61
+\Hy@SectionHShift=\skip64
 )
 (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/cite\overcite.sty
 Package: overcite 2003/05/27  v 4.0
@@ -396,19 +434,63 @@ LaTeX Info: Redefining \cite on input line 441.
 Package: footnpag 1995/11/10 v2.6 numbering footnotes per page
 \old_foot_file=\read2
 \foot_file=\write3
-\foot_name_no=\count286
+\foot_name_no=\count295
 )
-LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 2
+(C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/enumitem\enumitem.sty
+Package: enumitem 2019/06/20 v3.9 Customized lists
+\labelindent=\skip65
+\enit@outerparindent=\dimen181
+\enit@toks=\toks27
+\enit@inbox=\box56
+\enit@count@id=\count296
+\enitdp@description=\count297
+)
+(C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty
+Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
+\heavyrulewidth=\dimen182
+\lightrulewidth=\dimen183
+\cmidrulewidth=\dimen184
+\belowrulesep=\dimen185
+\belowbottomsep=\dimen186
+\aboverulesep=\dimen187
+\abovetopsep=\dimen188
+\cmidrulesep=\dimen189
+\cmidrulekern=\dimen190
+\defaultaddspace=\dimen191
+\@cmidla=\count298
+\@cmidlb=\count299
+\@aboverulesep=\dimen192
+\@belowrulesep=\dimen193
+\@thisruleclass=\count300
+\@lastruleclass=\count301
+\@thisrulewidth=\dimen194
+)
+(C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/slashbox\slashbox.sty
+slashbox style by K.Yasuoka, May 1993.
+\@slashboxa=\box57
+\@slashboxb=\box58
+\@slashboxc=\box59
+\@slashboxwd=\count302
+\@slashboxht=\count303
+\@slashsepl=\dimen195
+\@slashsepr=\dimen196
+) (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/multirow\multirow.sty
+Package: multirow 2021/03/15 v2.8 Span multiple rows of a table
+\multirow@colwidth=\skip66
+\multirow@cntb=\count304
+\multirow@dima=\skip67
+\bigstrutjot=\dimen197
+)
+LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 3
 6.
-
-(C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1ptm.fd
+ (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
 (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
 tex.def
 File: l3backend-pdftex.def 2021-10-18 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count287
-\l__pdf_internal_box=\box54
+\l__color_backend_stack_int=\count305
+\l__pdf_internal_box=\box60
 )
 
 LaTeX Warning: Unused global option(s):
@@ -417,39 +499,39 @@ LaTeX Warning: Unused global option(s):
 (final_project.aux)
 \openout1 = `final_project.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 26.
-LaTeX Font Info:    ... okay on input line 26.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 36.
+LaTeX Font Info:    ... okay on input line 36.
 
 (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
 ii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count288
-\scratchdimen=\dimen181
-\scratchbox=\box55
-\nofMPsegments=\count289
-\nofMParguments=\count290
-\everyMPshowfont=\toks24
-\MPscratchCnt=\count291
-\MPscratchDim=\dimen182
-\MPnumerator=\count292
-\makeMPintoPDFobject=\count293
-\everyMPtoPDFconversion=\toks25
+\scratchcounter=\count306
+\scratchdimen=\dimen198
+\scratchbox=\box61
+\nofMPsegments=\count307
+\nofMParguments=\count308
+\everyMPshowfont=\toks28
+\MPscratchCnt=\count309
+\MPscratchDim=\dimen199
+\MPnumerator=\count310
+\makeMPintoPDFobject=\count311
+\everyMPtoPDFconversion=\toks29
 )
 (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
 ase.sty
@@ -462,9 +544,10 @@ fg
 File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
 ))
 Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: float package is loaded.
 Package caption Info: hyperref package is loaded.
 Package caption Info: End \AtBeginDocument code.
-Package hyperref Info: Link coloring ON on input line 26.
+Package hyperref Info: Link coloring ON on input line 36.
 
 (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
 Package: nameref 2021-04-02 v2.47 Cross-referencing by name of section
@@ -476,128 +559,153 @@ Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
 lestring.sty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
-\c@section@level=\count294
+\c@section@level=\count312
 )
-LaTeX Info: Redefining \ref on input line 26.
-LaTeX Info: Redefining \pageref on input line 26.
-LaTeX Info: Redefining \nameref on input line 26.
+LaTeX Info: Redefining \ref on input line 36.
+LaTeX Info: Redefining \pageref on input line 36.
+LaTeX Info: Redefining \nameref on input line 36.
  (final_project.out) (final_project.out)
 \@outlinefile=\write4
 \openout4 = `final_project.out'.
 
-LaTeX Font Info:    Trying to load font information for OT1+phv on input line 3
+LaTeX Font Info:    Trying to load font information for OT1+phv on input line 4
 3.
 
 (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1phv.fd
 File: ot1phv.fd 2020/03/25 scalable font definitions for OT1/phv.
 )
-LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 3
+LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 4
 3.
 
 (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ts1ptm.fd
 File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 )
-<Figures/ViconMotionCaptureSpace.jpg, id=64, 534.99875pt x 401.5pt>
+<Figures/ViconMotionCaptureSpace.jpg, id=41, 534.99875pt x 401.5pt>
 File: Figures/ViconMotionCaptureSpace.jpg Graphic file (type jpg)
 <use Figures/ViconMotionCaptureSpace.jpg>
 Package pdftex.def Info: Figures/ViconMotionCaptureSpace.jpg  used on input lin
-e 52.
+e 62.
 (pdftex.def)             Requested size: 195.12767pt x 146.43906pt.
-<Figures/MotionCaptureDrone.jpg, id=67, 1027.84pt x 730.73pt>
+<Figures/MotionCaptureDrone.jpg, id=44, 1027.84pt x 730.73pt>
 File: Figures/MotionCaptureDrone.jpg Graphic file (type jpg)
 <use Figures/MotionCaptureDrone.jpg>
-Package pdftex.def Info: Figures/MotionCaptureDrone.jpg  used on input line 58.
+Package pdftex.def Info: Figures/MotionCaptureDrone.jpg  used on input line 68.
 
 (pdftex.def)             Requested size: 195.12767pt x 138.71748pt.
 
 [1
 
 {C:/Users/kadhi/AppData/Local/MiKTeX/pdftex/config/pdftex.map}]
-<Figures/DroneModel.png, id=88, 2543.5025pt x 708.6475pt>
+<Figures/DroneModel.png, id=65, 2543.5025pt x 708.6475pt>
 File: Figures/DroneModel.png Graphic file (type png)
 <use Figures/DroneModel.png>
-Package pdftex.def Info: Figures/DroneModel.png  used on input line 93.
+Package pdftex.def Info: Figures/DroneModel.png  used on input line 104.
 (pdftex.def)             Requested size: 361.34999pt x 100.66974pt.
-<Figures/GazeboWorld.png, id=93, 1144.275pt x 900.36375pt>
+<Figures/GazeboWorld.png, id=71, 1144.275pt x 900.36375pt>
 File: Figures/GazeboWorld.png Graphic file (type png)
 <use Figures/GazeboWorld.png>
-Package pdftex.def Info: Figures/GazeboWorld.png  used on input line 120.
+Package pdftex.def Info: Figures/GazeboWorld.png  used on input line 131.
 (pdftex.def)             Requested size: 252.94499pt x 199.02858pt.
  [2 <./Figures/ViconMotionCaptureSpace.jpg> <./Figures/MotionCaptureDrone.jpg> 
-<./Figures/DroneModel.png>] [3 <./Figures/GazeboWorld.png>]
-Overfull \hbox (364.71088pt too wide) detected at line 185
-[][]\OML/cmm/m/it/6 A \OT1/cmr/m/n/6 = []
- []
-
-
-LaTeX Warning: Reference `eq:y' on page 4 undefined on input line 189.
-
-[4]
-LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 2
-19.
- (C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1pcr.fd
-File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
-)
-LaTeX Font Info:    Trying to load font information for OMS+pcr on input line 2
-19.
-
-(C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\omspcr.fd
-File: omspcr.fd 
-)
-LaTeX Font Info:    Font shape `OMS/pcr/m/n' in size <10.95> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 219.
-
-(final_project.fot)
+<./Figures/DroneModel.png>] (final_project.fot)
 \openout3 = `final_project.fot'.
 
-<Figures/test.pdf, id=141, 255.95625pt x 187.70125pt>
-File: Figures/test.pdf Graphic file (type pdf)
-<use Figures/test.pdf>
-Package pdftex.def Info: Figures/test.pdf  used on input line 248.
-(pdftex.def)             Requested size: 252.94499pt x 185.49257pt.
+<Figures/DroneFrame.png, id=91, 1998.46625pt x 1359.0775pt>
+File: Figures/DroneFrame.png Graphic file (type png)
+<use Figures/DroneFrame.png>
+Package pdftex.def Info: Figures/DroneFrame.png  used on input line 166.
+(pdftex.def)             Requested size: 346.89731pt x 235.91351pt.
+ [3 <./Figures/GazeboWorld.png>] [4 <./Figures/DroneFrame.png>]
+<Figures/AMatrix.png, id=127, 992.508pt x 318.59026pt>
+File: Figures/AMatrix.png Graphic file (type png)
+<use Figures/AMatrix.png>
+Package pdftex.def Info: Figures/AMatrix.png  used on input line 332.
+(pdftex.def)             Requested size: 433.62pt x 139.18843pt.
  [5]
-Overfull \hbox (7.08975pt too wide) in paragraph at lines 258--259
-[] []\OT1/ptm/m/it/10.95 Graphic For-mats.[][] \OT1/ptm/m/n/10.95 The high-est 
-qual-ity for-mats are En-cap-su-lated PostScript (EPS) and PDF vector-
- []
+LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 3
+40.
 
+(C:\Users\kadhi\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1pcr.fd
+File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
+)
+[6 <./Figures/AMatrix.png>]
+<Figures/HMatrix.png, id=159, 1099.7085pt x 232.4685pt>
+File: Figures/HMatrix.png Graphic file (type png)
+<use Figures/HMatrix.png>
+Package pdftex.def Info: Figures/HMatrix.png  used on input line 417.
+(pdftex.def)             Requested size: 433.62pt x 91.66264pt.
+ [7]
+Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
+put line 428.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [6 <./Figures/test.pdf>] [7]
-Underfull \hbox (badness 10000) in paragraph at lines 315--319
-
+ [8 <./Figures/HMatrix.png>]
+Overfull \hbox (20.88075pt too wide) in paragraph at lines 488--489
+\OT1/pcr/m/n/10.95 (0.001)^2 0 0 0 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2 0 
+0 0])[]\OT1/ptm/m/n/10.95 , since
  []
 
-(final_project.bbl [8]) [9] (final_project.aux)
+[9]
+<../circle1_just_traj.png, id=196, 421.575pt x 316.0608pt>
+File: ../circle1_just_traj.png Graphic file (type png)
+<use ../circle1_just_traj.png>
+Package pdftex.def Info: ../circle1_just_traj.png  used on input line 503.
+(pdftex.def)             Requested size: 117.07777pt x 87.77301pt.
+File: ../circle1_just_traj.png Graphic file (type png)
+<use ../circle1_just_traj.png>
+Package pdftex.def Info: ../circle1_just_traj.png  used on input line 509.
+(pdftex.def)             Requested size: 117.07777pt x 87.77301pt.
+File: ../circle1_just_traj.png Graphic file (type png)
+<use ../circle1_just_traj.png>
+Package pdftex.def Info: ../circle1_just_traj.png  used on input line 515.
+(pdftex.def)             Requested size: 117.07777pt x 87.77301pt.
+File: ../circle1_just_traj.png Graphic file (type png)
+<use ../circle1_just_traj.png>
+Package pdftex.def Info: ../circle1_just_traj.png  used on input line 521.
+(pdftex.def)             Requested size: 117.07777pt x 87.77301pt.
 
-LaTeX Warning: There were undefined references.
+Overfull \vbox (2.0pt too high) detected at line 545
+ []
 
+
+Overfull \vbox (2.0pt too high) detected at line 564
+ []
+
+
+Overfull \vbox (2.0pt too high) detected at line 583
+ []
+
+[10 <../circle1_just_traj.png (PNG copy)>] (final_project.bbl [11]) [12]
+(final_project.aux)
 Package rerunfilecheck Info: File `final_project.out' has not changed.
-(rerunfilecheck)             Checksum: C1473F511138A4E8F02B671A217045EC;2238.
+(rerunfilecheck)             Checksum: D52F2C66E74AF2F1FA80CAC96C2CCA6A;1133.
  ) 
 Here is how much of TeX's memory you used:
- 12330 strings out of 478699
- 205581 string characters out of 2846961
- 511580 words of memory out of 3000000
- 30125 multiletter control sequences out of 15000+600000
- 442130 words of font info for 110 fonts, out of 8000000 for 9000
+ 13567 strings out of 478699
+ 227356 string characters out of 2846961
+ 526762 words of memory out of 3000000
+ 31316 multiletter control sequences out of 15000+600000
+ 439991 words of font info for 107 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 70i,12n,77p,1429b,679s stack positions out of 5000i,500n,10000p,200000b,80000s
-pdfTeX warning (dest): name{section*.22} has been referenced but does not exi
+ 70i,24n,77p,1650b,681s stack positions out of 5000i,500n,10000p,200000b,80000s
+pdfTeX warning (dest): name{section*.21} has been referenced but does not exi
 st, replaced by a fixed one
-
-pdfTeX warning (dest): name{section*.21} has been referenced but does not exist
-, replaced by a fixed one
 
 pdfTeX warning (dest): name{section*.20} has been referenced but does not exist
 , replaced by a fixed one
 
-pdfTeX warning (dest): name{section*.18} has been referenced but does not exist
+pdfTeX warning (dest): name{section*.16} has been referenced but does not exist
 , replaced by a fixed one
 
-pdfTeX warning (dest): name{section*.9} has been referenced but does not exist,
- replaced by a fixed one
+pdfTeX warning (dest): name{section*.14} has been referenced but does not exist
+, replaced by a fixed one
+
+pdfTeX warning (dest): name{section*.13} has been referenced but does not exist
+, replaced by a fixed one
+
+pdfTeX warning (dest): name{section*.11} has been referenced but does not exist
+, replaced by a fixed one
 
 pdfTeX warning (dest): name{section*.8} has been referenced but does not exist,
  replaced by a fixed one
@@ -611,28 +719,29 @@ pdfTeX warning (dest): name{section*.1} has been referenced but does not exist,
 {C:/Users/kadhi/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc}<C:/U
 sers/kadhi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.
 pfb><C:/Users/kadhi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/c
-mextra/cmex7.pfb><C:/Users/kadhi/AppData/Local/Programs/MiKTeX/fonts/type1/publ
+mextra/cmex9.pfb><C:/Users/kadhi/AppData/Local/Programs/MiKTeX/fonts/type1/publ
 ic/amsfonts/cm/cmmi10.pfb><C:/Users/kadhi/AppData/Local/Programs/MiKTeX/fonts/t
-ype1/public/amsfonts/cm/cmmi5.pfb><C:/Users/kadhi/AppData/Local/Programs/MiKTeX
-/fonts/type1/public/amsfonts/cm/cmmi6.pfb><C:/Users/kadhi/AppData/Local/Program
-s/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/kadhi/AppData/Local
+ype1/public/amsfonts/cm/cmmi6.pfb><C:/Users/kadhi/AppData/Local/Programs/MiKTeX
+/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/kadhi/AppData/Local/Program
+s/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi9.pfb><C:/Users/kadhi/AppData/Local
 /Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/kadhi/AppDa
-ta/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr5.pfb><C:/Users/kadh
-i/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Use
-rs/kadhi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb>
+ta/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Users/kadh
+i/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Use
+rs/kadhi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr9.pfb>
 <C:/Users/kadhi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cm
 sy10.pfb><C:/Users/kadhi/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfo
 nts/cm/cmsy6.pfb><C:/Users/kadhi/AppData/Local/Programs/MiKTeX/fonts/type1/publ
 ic/amsfonts/cm/cmsy8.pfb><C:/Users/kadhi/AppData/Local/Programs/MiKTeX/fonts/ty
 pe1/public/amsfonts/cm/cmsy9.pfb><C:/Users/kadhi/AppData/Local/Programs/MiKTeX/
-fonts/type1/urw/courier/ucrr8a.pfb><C:/Users/kadhi/AppData/Local/Programs/MiKTe
-X/fonts/type1/urw/helvetic/uhvb8a.pfb><C:/Users/kadhi/AppData/Local/Programs/Mi
-KTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/kadhi/AppData/Local/Programs/Mi
-KTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/kadhi/AppData/Local/Programs/Mi
-KTeX/fonts/type1/urw/times/utmri8a.pfb>
-Output written on final_project.pdf (9 pages, 654764 bytes).
+fonts/type1/public/amsfonts/latxfont/line10.pfb><C:/Users/kadhi/AppData/Local/P
+rograms/MiKTeX/fonts/type1/urw/courier/ucrr8a.pfb><C:/Users/kadhi/AppData/Local
+/Programs/MiKTeX/fonts/type1/urw/helvetic/uhvb8a.pfb><C:/Users/kadhi/AppData/Lo
+cal/Programs/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/kadhi/AppData/Lo
+cal/Programs/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/kadhi/AppData/Lo
+cal/Programs/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
+Output written on final_project.pdf (12 pages, 1442019 bytes).
 PDF statistics:
- 299 PDF objects out of 1000 (max. 8388607)
- 52 named destinations out of 1000 (max. 500000)
- 146 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 321 PDF objects out of 1000 (max. 8388607)
+ 65 named destinations out of 1000 (max. 500000)
+ 113 words of extra memory for PDF output out of 10000 (max. 10000000)
 

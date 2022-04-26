@@ -11,13 +11,23 @@
 \usepackage{amsmath}
 \usepackage{subcaption}
 \usepackage{adjustbox}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+%\usepackage{algpseudocode}
 %\usepackage[notref,notcite]{showkeys}  % use this to temporarily show labels
 \usepackage[colorlinks=true, pdfstartview=FitV, linkcolor=black, citecolor= black, urlcolor= black]{hyperref}
 \usepackage{overcite}
 \usepackage{footnpag}			      	% make footnote symbols restart on each page
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{slashbox}
+\usepackage{multirow}
 
 
 \newcommand\scalemath[2]{\scalebox{#1}{\mbox{\ensuremath{\displaystyle #2}}}}
+\NewDocumentCommand{\codeword}{v}{%
+\texttt{\textcolor{blue}{#1}}%
+}
 
 \PaperNumber{XX-XXX}
 
@@ -40,9 +50,9 @@ A motion capture system is generally used to estimate drone states in laboratory
 
 
 \section{Introduction}
-Drones generally use GPS measurements to estimate their position and velocity, in conjunction with measurements from an IMU to get their roll, pitch, and yaw, and to increase the accuracy of their position and velocity measurements. In laboratory environments, the drones cannot use GPS data to complement other sensory inputes, so a motion capture system is generally used\cite{vicon_2022}. In such a system, a local origin is set, and the drone use that as the origin of its inertial frame of reference.
+Drones generally use GPS measurements in conjunction with measurements from an IMU to estimate their position, velocity, and their roll, pitch, and yaw. In laboratory environments, the drones cannot use GPS data to complement other sensory inputs, so a motion capture system is generally used\cite{vicon_2022}. In such a system, a local origin is set, and the drone uses that as the origin of its inertial frame of reference.
 
-In optical-passive motion capture, retroreflective markers are placed at various places on the drone. Multiple infrared cameras are positioned around the experiment area, and they capture the infrared light reflected back from the retroreflective markers at rates of around 240 Hz. Such high input frequency is important when testing out controllers, as a high number of samples would allow the controller to control better against sudden changes in the state of the system.
+In optical-passive motion capture, retro-reflective markers are placed at various places on the drone. Multiple infrared cameras are positioned around the experiment area, and they capture the infrared light reflected back from the retroreflective markers at rates of around 120 Hz. Such high input frequency is important when testing out controllers, as a high number of samples would allow the controller to control better against sudden changes in the state of the system. Figure \ref{fig:MotionCaptureExample} shows examples of a motion capture space and a drone with retro-reflective markers attached.
 
 
 \begin{figure}[htb]
@@ -56,21 +66,22 @@ In optical-passive motion capture, retroreflective markers are placed at various
 \begin{subfigure}{.5\textwidth}
 	\centering
 	\includegraphics[width=0.9\textwidth]{Figures/MotionCaptureDrone}
-	\caption{Example drone with retroreflective markers\cite{MotionCaptureDrone}}
+	\caption{Example drone with retro-reflective markers\cite{MotionCaptureDrone}}
 	\label{fig:MotionCaptureDrone}
 \end{subfigure}
 \caption{Example setup that could be used if this study were to be repeated on real-life data}
 \label{fig:MotionCaptureExample}
 \end{figure}
 
-Most previous studies in drone state estimation have assumed constant inputs. In this study, a linear-quadratic regulator (LQR) controller will be used to find the inputs to the system's dynamics at every timestep, thereby increasing the types of flight paths that can be tracked. This study will use simulated motion capture system data to estimate the states of a drone in various flight patterns. The simulation will take place in a Gazebo 3D simulation environment\cite{gazebo}. A ROS (Robot Operating System)\cite{ros} package will be used to perform control and trajectory planning for the drone, and this log will be logged and will be run through an Extended Kalman filter (EKF) and an Unscented Kalman filter (UKF) in MATLAB to obtain an accurate estimate of the position of the drone. The performance of the filters for different flight paths will be analyzed.
+Most previous studies in drone state estimation have assumed constant inputs. In this study, a linear-quadratic regulator (LQR) controller will be used to find the inputs to the system's dynamics at every timestep, thereby allowing more types of flight paths to be tracked. This study will use simulated motion capture system data to estimate the states of a drone in various flight patterns. The simulation will take place in a Gazebo 3D simulation environment\cite{gazebo}. A ROS (Robot Operating System)\cite{ros} package will be used to perform control and trajectory planning for the drone, and logs of the flight data will be will be run through an Extended Kalman filter (EKF) and an Unscented Kalman filter (UKF) in MATLAB to obtain an accurate estimate of the position of the drone. The performance of the filters on flight paths of varying levels of difficulty will be analyzed.
 
 % TODO: The remainder of the paper is organized as follows.
 
 % TODO: come up with better names later
+% TODO: periods at the end of captions?
 \section{Simulation Setup}
 
-Data for this study was obtained through simulation. The drone chosen for this experiment was the 3DR Iris\cite{iris}, a model of which is available for use in Gazebo\cite{gazebo}. The Spatial Data File (SDF) of the Iris' model was edited to include four reflective markers. The positions of these markers can be seen in Table \ref{tab:DroneModel} and Figure \ref{fig:DroneModel}.
+Data for this study was obtained through simulation. The drone chosen for this experiment was the 3DR Iris\cite{iris}, a model of which is available for use in Gazebo\cite{gazebo}. The Spatial Data File (SDF) of the Iris' model was edited to include four reflective markers. The positions of these markers can be seen in Table \ref{tab:DroneModel} and Figure \ref{fig:DroneModel}. This drone also contained an IMU, and the SDF of the Iris' model showed that it was located at the centroid of the drone.
 
 \begin{table}[htbp]
 	\fontsize{10}{10}\selectfont
@@ -95,9 +106,7 @@ Data for this study was obtained through simulation. The drone chosen for this e
 	\label{fig:DroneModel}
 \end{figure}
 
-A world with four infrared cameras was then created in Gazebo, the coordinates of which can be seen in Table \ref{tab:cameras}. Figure \ref{fig:GazeboWorld} shows the setup of the environment. The distance from these cameras to reflective markers on the drone was measured at the rate of approximately !!!! Hz. Figure \ref{fig:DroneModel} shows the positions of reflective markers on the drone. 
-
-% TODO: add more cameras
+A world with four Vicon Vantage V16 infrared cameras\cite{vicon_2022} was then created in Gazebo, and their coordinates can be seen in Table \ref{tab:cameras}. Figure \ref{fig:GazeboWorld} shows the setup of the environment. The distance from these cameras to reflective markers on the drone was measured at a rate of approximately 120 Hz, which is consistent with the spec sheet of the Vicon Vantage V16\cite{vicon_2022}.
 
 \begin{table}[htbp]
 	\fontsize{10}{10}\selectfont
@@ -122,22 +131,174 @@ A world with four infrared cameras was then created in Gazebo, the coordinates o
 	\label{fig:GazeboWorld}
 \end{figure}
 
-\section{Filter Setup}
+\section{Dynamics Modeling}
 
 Eq. \eqref{eq:X} shows the states that were to be observed for the filter, where $x$, $y$, and $z$ are the $x$, $y$, and $z$ positions of the drone, $v_x$, $v_y$, and $v_z$ are the $x$, $y$, and $z$ velocities of the drone, $\phi$, $\theta$, and $\psi$ are the roll, pitch, yaw of the drone, and $p$, $q$, and $r$ are the body angular velocities in terms of Euler angles and Euler rates. 
+\setcounter{MaxMatrixCols}{12}
 \begin{equation}
 	\label{eq:X}
 	X = \begin{bmatrix}
-		x & y & z & v_x & v_y & v_z & \phi & \theta & \psi
+		x & y & z & v_x & v_y & v_z & \phi & \theta & \psi & p & q & r
 \end{bmatrix}^T
 \end{equation}
 
-Taking the time derivative of Eq. \eqref{eq:X} gives Eq. \eqref{eq:Xdot}, where $u_3$ through $u_6$ are the thrust inputs, and roll, pitch, yaw torques on the drone respectively.
+Taking the time derivative of $X_1$ through $X_3$ from Eq. \eqref{eq:X} gives Eq. \eqref{eq:X1dot}.
 
 \begin{equation}
-	\label{eq:Xdot}
-	\dot{X} = F = \begin{bmatrix}
-		\dot{x} \\ \dot{y} \\ \dot{z} \\ \dot{v_x} \\ \dot{v_y} \\ \dot{v_z} \\ \dot{\phi} \\ \dot{\theta} \\ \dot{\psi}
+\begin{bmatrix}
+\dot{x}\\
+\dot{y}\\
+\dot{z}
+\end{bmatrix} =
+\begin{bmatrix}
+v_x \\
+v_y\\
+v_z
+\end{bmatrix}
+\label{eq:X1dot}
+\end{equation}
+
+The velocities of the drone (i.e. $v_x$, $v_y$, $v_z$) will be perturbed by the thrust on the drone, which will be referred to as $u_3$. However, drone dynamics states that the thrust will only act in the $+z$ of the drone body-fixed frame, denoted by $X_b$, $Y_b$, and $Z_b$ in Figure \ref{fig:DroneFrame}. Thus, the thrust input must be rotated with respected to the roll, pitch, and yaw of the drone to find its effect along the $X_i$, $Y_i$, and $Z_i$ directions. An Euler 123 rotation, denoted by $R$ in Eq. \eqref{eq:R} is used to rotate from the body frame to the inertial frame\footnote{Throughout this report, $c$, $s$, and $t$ will be used in place of $\cos$, $\sin$, and $\tan$ for brevity}. Combining these steps, taking the time derivative of $X_4$ through $X_6$ gives Eq. \eqref{eq:X2dot}.
+
+\begin{figure}[htb]
+	\centering\includegraphics[width=0.8\textwidth]{Figures/DroneFrame}
+	\caption{An illustration comparing the inertial world frame (denoted by dotted lines), and the body-fixed frame (denoted by solid lines)}
+	\label{fig:DroneFrame}
+\end{figure}
+
+\begin{equation}
+\label{eq:R}
+R_{123} = R_z(\psi)R_y(\theta)R_x(\phi) = \begin{bmatrix}
+c(\psi) & s(\psi) & 0 \\
+s(\psi) & c(\psi) & 0 \\
+0 & 0 & 1
+\end{bmatrix}
+\begin{bmatrix}
+c(\theta) & 0 & s(\theta) \\
+0 & 1 & 0 \\
+-s(\theta) & 0 & c(\theta)
+\end{bmatrix}
+\begin{bmatrix}
+1&0&0\\
+0&c(\phi)&-s(\phi)\\
+0&s(\phi)&c(\phi)
+\end{bmatrix}
+\end{equation}
+\begin{equation}
+R_{123}
+=
+\begin{bmatrix}
+c(\theta)c(\psi) & c(\psi)s(\theta)s(\phi) - c(\phi)s(\psi) & s(\phi)s(\psi) + c(\phi)c(\psi)s(\theta) \\
+c(\theta)s(\psi) & c(\phi)c(\psi) + s(\theta)s(\phi)s(\psi) & c(\phi)s(\theta)s(\psi) - c(\psi)s(\phi) \\
+-s(\theta) & c(\theta)s(\phi) & c(\theta)c(\phi) 
+\end{bmatrix}
+\end{equation}
+
+\begin{equation}
+\label{eq:X2dot}
+\begin{bmatrix}
+\dot{v}_x\\
+\dot{v}_y\\
+\dot{v}_z\\
+\end{bmatrix}
+= \frac{R_{123}
+\begin{bmatrix}
+0\\
+0\\
+u_3
+\end{bmatrix}
+-
+\begin{bmatrix}
+0\\
+0\\
+mg
+\end{bmatrix}}{m}=
+\begin{bmatrix}
+(u_3(s(\phi)s(\psi) + c(\phi)c(\psi)s(\theta)))/m \\
+-(u_3(c(\psi)s(\phi) - c(\phi)s(\theta)s(\psi)))/m \\
+-(mg - u_3c(\theta)c(\phi))/m
+\end{bmatrix}
+\end{equation}
+
+Similarly, since $p$, $q$, and $r$ (i.e. the roll, pitch, and yaw rates) are in the body frame, they must be rotated into the inertial frame. Taking the time derivative of $X_7$ through $X_9$ then gives Eq. \eqref{eq:X3dot}.
+
+\begin{equation}
+\label{eq:X3dot}
+\begin{bmatrix}
+\dot{\phi}\\
+\dot{\theta}\\
+\dot{\psi}
+\end{bmatrix}=
+\begin{bmatrix}
+1& s(\phi)t(\theta)&  c(\phi)t(\theta)\\
+0& c(\phi)&          -s(\phi)\\
+0& s(\phi)/c(\theta)&c(\phi)/c(\theta)
+\end{bmatrix}
+\begin{bmatrix}
+p\\
+q\\
+r
+\end{bmatrix}=
+\begin{bmatrix}
+p + r\cos(\phi)\tan(\theta) + q\tan(\theta)\sin(\phi) \\
+q\cos(\phi) - r\sin(\phi) \\
+(r\cos(\phi))/\cos(\theta) + (q\sin(\phi))/\cos(\theta)
+\end{bmatrix}
+\end{equation}
+
+The rotational equations of motion can be derived from Euler’s equations for rigid body dynamics. Expressed in vector form, Euler’s equations are written as
+
+\[
+I\dot{\omega}+\omega\times(I\omega)=\tau
+\]
+
+where $\omega$ is the angular velocity vector, $I$ is the inertia matrix, and $\tau$ is a vector of external torques. This can be rewritten as
+% COMBAK: look at this and see if the right variables are being used
+\[
+\dot{\omega}=\begin{bmatrix}
+\dot{p}\\
+\dot{q}\\
+\dot{r}\\
+\end{bmatrix}=
+I^{-1}(\begin{bmatrix}
+u_4\\u_5\\u_6
+\end{bmatrix}\omega\times	(I\omega))
+\]
+
+where $u_4$ through $u_6$ are the roll, pitch, yaw torques on the drone respectively. The quadcopter can be modeled as two thin uniform rods crossed at the origin with a point mass (the motor) at the end of each. This results in a diagonal inertia matrix of the form
+
+\[
+I = \begin{bmatrix}
+I_{xx}&0&0\\
+0&I_{yy}&0\\
+0&0&I_{zz}
+\end{bmatrix}
+\]
+
+Combining these steps, the final result of the time derivative of states $X_{10}$ through $X_{12}$ can be seen in Eq. \eqref{eq:X4dot}\cite{X4dot}.
+
+\begin{equation}
+\label{eq:X4dot}
+\begin{bmatrix}
+\dot{p}\\
+\dot{q}\\
+\dot{r}
+\end{bmatrix}=
+\begin{bmatrix}
+(u_4 + I_{yy}qr - I_{zz}qr)/I_{xx}\\
+(u_5 - I_{xx}pr + I_{zz}pr)/I_{yy}\\
+(u_6 + I_{xx}qp - I_{yy}qp)/I_{zz}
+\end{bmatrix}
+\end{equation}
+
+% COMBAK: DELETE THIS LATER!!!!!!!!
+Combining Equations \ref{eq:X1dot}, \ref{eq:X2dot}, \ref{eq:X3dot} and \ref{eq:X4dot} gives Eq. \eqref{eq:Xdot}.
+
+
+\begin{equation}
+\label{eq:Xdot}
+\dot{X}(t) = F(X(t), t) = \begin{bmatrix}
+\dot{x} \\ \dot{y} \\ \dot{z} \\ \dot{v_x} \\ \dot{v_y} \\ \dot{v_z} \\ \dot{\phi} \\ \dot{\theta} \\ \dot{\psi} \\ \dot{p} \\ \dot{q} \\ \dot{r} 
 \end{bmatrix} =  \begin{bmatrix}
 v_x \\
 v_y \\
@@ -165,176 +326,276 @@ A = \frac{\partial F}{\partial X} =
 \end{bmatrix}
 \end{equation}
 
-\tiny
-\setcounter{MaxMatrixCols}{12}
+\begin{figure}[H]
+	\centering\includegraphics[width=\textwidth]{Figures/AMatrix}
+	\caption{The final A matrix, where $c$, $s$, and $t$, are $\cos$, $\sin$, and $\tan$. (This was included as a figure since \LaTeX\ did not allow matrices this wide)}
+	\label{fig:AMatrix}
+\end{figure}
+
+Since the SDF of the Iris model specifies its physical properties to be used in by the simulator, the drone's mass and moment of inertia values were taken from the file to be $m = 1.545\ \text{kg}$, $I_{xx} = 0.029125\ \text{kg}\cdot \text{m}^2$, $I_{yy} = 0.029125\ \text{kg}\cdot \text{m}^2$, and $I_{zz} = 0.055225\ \text{kg}\cdot \text{m}^2$, and $g = 9.81\ \text{m}/\text{s}^2$ was used.
+
+% TODO: change ref to ~ref
+It can be noticed from Eq.~\ref{eq:Xdot} that to be able to propagate the drone's state forward, it is necessary to have some knowledge of $u_3$ through $u_6$, i.e. the thrust, and roll, pitch, yaw torques. A Linear–quadratic regulator (LQR) controller will be created for this purpose. The LQR controller will take in the drone's current state, compute $A$ using Eq.~\ref{eq:A} with $u_3 = mg$, compute $B$ using Eq.~\ref{eq:B}, and uses $Q$ and $R$ from Eq. \ref{eq:QandR} to compute the optimal gain matrix for the LQR controller, $K$, according to Eq. \ref{eq:LQR}, and return a vector of inputs $u_3$ through $u_6$ to control the drone\footnote{Note that $Q$, $R$, and $K$ in the LQR controller play a similar role as they do in the Kalman filter, but they are not the same value}. The LQR logic will be done using MATLAB's \texttt{lqr} function\cite{LQR}.
+
 \begin{equation}
-A = \begin{bmatrix}
-0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
-0 & 0 & 0 & 0 & 0 & 0 & (u_3(c(q_7)s(q_9) - c(q_9)s(q_7)s(q_8))) / m & (u_3c(q_7)c(q_8)c(q_9)) / m & (u_3(c(q_9)s(q_7) - c(q_7)s(q_8)s(q_9))) / m & 0 & 0 & 0 \\
-0 & 0 & 0 & 0 & 0 & 0 & -(u_3(c(q_7)c(q_9) + s(q_7)s(q_8)s(q_9))) / m & (u_3c(q_7)c(q_8)s(q_9)) / m & (u_3(s(q_7)s(q_9) + c(q_7)c(q_9)s(q_8))) / m & 0 & 0 & 0 \\
-0 & 0 & 0 & 0 & 0 & 0 & -(u_3c(q_8)s(q_7)) / m & -(u_3c(q_7)s(q_8)) / m & 0 & 0 & 0 & 0 \\
-0 & 0 & 0 & 0 & 0 & 0 & q_{11}c(q_7)t(q_8) - q_{12}s(q_7)t(q_8) & q_{12}c(q_7)(t(q_8)^2 + 1) + q_{11}s(q_7)(t(q_8)^2 + 1) & 0 & 1 & s(q_7)t(q_8) & c(q_7)t(q_8) \\
-0 & 0 & 0 & 0 & 0 & 0 & -q_{12}c(q_7) - q_{11}s(q_7) & 0 & 0 & 0 & c(q_7) & -s(q_7) \\
-0 & 0 & 0 & 0 & 0 & 0 & (q_{11}c(q_7)) / c(q_8) - (q_{12}s(q_7)) / c(q_8) &  (q_{12}c(q_7)s(q_8)) / c(q_8)^2 + (q_{11}s(q_7)s(q_8)) / c(q_8)^2 & 0 & 0 & s(q_7) / c(q_8) & c(q_7) / c(q_8) \\
-0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & (I_{yy}q_{12} - I_{zz}q_{12}) / I_{xx} & (I_{yy}q_{11} - I_{zz}q_{11}) / I_{xx} \\
-0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & -(I_{xx}q_{12} - I_{zz}q_{12}) / I_{yy} & 0 & -(I_{xx}q_{10} - I_{zz}q_{10}) / I_{yy} \\
-0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & (I_{xx}q_{11} - I_{yy}q_{11}) / I_{zz} & (I_{xx}q_{10} - I_{yy}q_{10}) / I_{zz} & 0
+\begin{split}
+\label{eq:B}
+B &= \frac{\partial F}{\partial u} = 
+\begin{bmatrix} 
+    \frac{\partial F_1}{\partial u_3} & \dots  & \frac{\partial F_1}{\partial u_6}\\
+    \vdots & \ddots & \vdots\\
+    \frac{\partial F_{12}}{\partial u_3} & \dots  & \frac{\partial F_{12}}{\partial u_6} 
+\end{bmatrix}\\&=\begin{bmatrix}
+         0&0&0&0\\
+         0&0&0&0\\
+         0&0&0&0\\
+         (\sin(\phi)\sin(\psi) + \cos(\phi)\cos(\psi)\sin(\theta)) / m&0&0&0\\
+         -(\cos(\psi)\sin(\phi) - \cos(\phi)\sin(\theta)\sin(\psi)) / m&0&0&0\\
+         (\cos(\phi)\cos(\theta)) / m&0&0&0\\
+         0&0&0&0\\
+         0&0&0&0\\
+         0&0&0&0\\
+         0&I_{xx}^{-1}&0&0\\
+         0&0&I_{yy}^{-1}&0\\
+         0&0&0&I_{zz}^{-1}
+\end{bmatrix}
+\end{split}
+\end{equation}
+
+\begin{equation}
+\label{eq:QandR}
+\begin{split}
+Q &= \texttt{diag([100 100 100 100 100 100 0.1 0.1 0.1 10 10 10])}\\
+R &= \texttt{diag([0.1 1000 1000 1000])}
+\end{split}
+\end{equation}
+
+\begin{equation}
+\label{eq:LQR}
+\begin{split}
+&\text{Find}\  K\  \text{such that}\  u=-Kx\  \text{minimizes}
+J(u)=\int_{0}^{\infty} (x^TQx+u^TRu)dt\\
+&\text{subject to the system dynamics}\  \dot{x}=Ax+Bu
+\end{split}
+\end{equation}
+
+\section{Measurement Model}
+
+The distance from the camera to the centroid of the drone was measured by each of the infrared cameras, and roll, pitch, yaw measurements of the drone would directly be measured using the IMU. To find the distance from the cameras to the centroid, the cameras would return the average of the distances of each of the reflective markers from the cameras. This math is done implicitly within the Vicon computer software, and just the ranges are returned. Thus, instead of maintaining a separate state for each of the reflective markers on the drone, it will be assumed that the measurement model uses the coordinates of the centroid to measure the range to the centroid\footnote{The alternative to this is to maintain the state of each marker separately, and propagate each state forward individually. However, since the reflective markers are placed almost symmetrically across the axes of the drone-fixed frame, this will offer little to no improvement in the accuracy of the estimates, and that possible slight improvement in accuracy will not outweigh the increase in computational time}. The noise for the range measurements will be set as the claimed accuracy on the specsheet of the Vicon Vantage V16. The roll, pitch, and yaw measurements will be used directly from the IMU measurements. The noise for the roll, pitch, yaw measurements will be experimentally determined by find the variance of the IMU measurements when the drone is stationary. The measurement model was then formulated as in Eq. \ref{eq:G}, where $X_n$, $Y_n$, and $Z_n$ are the $X$, $Y$, and $Z$ coordinates of the $n$th camera.
+
+\begin{equation}
+\label{eq:G}
+G(X(t), t) = 
+\begin{bmatrix}
+	\sqrt{(x-X_1)^2 + (y-Y_1)^2 + (z-Z_1)^2} \\
+	\sqrt{(x-X_2)^2 + (y-Y_2)^2 + (z-Z_2)^2} \\
+	\sqrt{(x-X_3)^2 + (y-Y_3)^2 + (z-Z_3)^2} \\
+	\sqrt{(x-X_4)^2 + (y-Y_4)^2 + (z-Z_4)^2} \\
+	\phi \\
+	\theta \\
+	\psi
 \end{bmatrix}
 \end{equation}
-\normalsize
-% COMBAK: can't fit the entire matrix
 
-The distance from the camera to the centroid of the drone was measured by each of the infrared cameras, and roll, pitch, yaw measurements of the drone would directly be measured using the IMU. Thus, the measurement model was formulated as in Eq. \ref{eq:y}.
-
-% TODO input y
-
-% WHY DO WE FIND H, G y confuse panni solrene
-
-The H matrix was found by taking partial of the measurement model with respect to $X$.
+The observation matrix, $H$, was found by taking partial of the measurement model, $G$, with respect to $X$.
 
 \begin{equation}
 \label{eq:H}
 H = \frac{\partial G}{\partial X} =
-\begin{bmatrix}
-	\frac{\partial y_1}{\partial x} & \dots  & \frac{\partial y_1}{\partial r}\\
+\begin{bmatrix} 
+    \frac{\partial G_1}{\partial x} & \dots  & \frac{\partial G_1}{\partial r}\\
     \vdots & \ddots & \vdots\\
-    \frac{\partial y_{!!!}}{\partial x} & \dots  & \frac{\partial y_{!!!}}{\partial r}
-TODO
-\end{bmatrix}
+    \frac{\partial G_{7}}{\partial x} & \dots  & \frac{\partial G_{7}}{\partial r}
+\end{bmatrix} 
 \end{equation}
-
-Using this setup, an Extended Kalman filter and an Unscented Kalman filter were implemented. 
-
-The American Astronautical Society (AAS) publishes bound sets of printed conference proceedings for personal, institutional, and library usage. The availability of hardcopy enhances the longevity of your work and elevates the importance of your conference contribution to professionals through archival publication. To preserve the consistency and quality of the proceedings, all authors adhere to the latest version of AAS conference proceedings format.
-
-This document is intended to serve as a visual and instructional guide, and as a \LaTeX\ document template, for the AAS conference proceedings format. This template provides the basic font sizes, styles, and margins required by the publisher's formatting instructions.   There are also styles for centered equations, figure and table captions, section and sub-section headings, footnote text, \emph{etc}. This template provides samples of their usage.  To use this document as a template, simply copy and change its contents with your own information while maintaining the required predefined style, rather than starting anew. Since this is not a tutorial on how to use \LaTeX\, refer to \LaTeX\ manuals for more information.
-
-
-Your manuscript should include a paper number, a title, an author listing, an abstract, an introductory section, one or more sections containing the main body of the manuscript, a concluding summary section, and a reference or bibliography section. You may also include a section on notation, an acknowledgements section, and appendices, as illustrated in the sequel. You should \emph{not} include a leading cover sheet. Author affiliation shall appear on the first page, added as a footnote to the last name of each the author. If a distributional release statement or copyright notice is required by your sponsor, this is added as a footnote to the title of the manuscript, appearing on the first page only. Page numbers should be centered halfway between the lower margin and the bottom edge of the page (\emph{i.e.}, approximately 0.75 inches from the bottom). Copy should be single space with double space between paragraphs, with the first line of each paragraph indented 0.2 inches.
-
-The recommended sans-serif font for paper number, title, and author listing is \emph{Arial}, or, \emph{Helvetica}. The title font and paper-number font should be the same: 14-point sans-serif, centered, and bold. The author-listing font should be 12-point sans-serif, centered, and bold. The recommended serif font for body text, headings, \emph{etc}., is \emph{Times} or \emph{Times New Roman} at 10-12 point, 11 point preferred. The captions for figures and tables are bold 10-point serif font. The endnote reference text and footnote text is 9-point serif font. The right-hand margin of body text should be justified; if not, it should be fairly even nevertheless. All text and text background shall remain uncolored (black on white). These conventions should be automatically implemented in this \LaTeX\ template when the predefined styles of this template are used.
-
-The body text of this template is based on the preferred font size of 11 points. To change this to 12-point size, increase the font size at the top of the \LaTeX\ template by uncommenting the appropriate {\tt documentclass[]\{\}} line. For very long manuscripts, a 10-point font may be used to keep the manuscript within the publisher's limit of twenty (20) physical pages.
-
-
-\section{This is a Sample of a General Section Heading}
-Numbering of section headings and paragraphs should be avoided. Major section headings are majuscule, bold, flush (aligned) left, and use the same style san-serif font as the body text. Widow and orphan lines should also be avoided; more than one line of a paragraph should appear at the end or beginning of a page, not one line by itself. A heading should not appear at the bottom of a page without at least two lines of text. Equations, figures, and tables must be sequentially numbered with no repeated numbers or gaps. Excessive white space --- such as large gaps before, between, and after text and figures --- should be minimal and eliminated where possible.
-
-
-
-
-
-\subsection{This Is a Sample of a Secondary (Sub-Section) Heading}
-Secondary, or sub-section, headings are title case (miniscule lettering with the first letter of major words majuscule), flush left, and bold. Secondary headings use the same serif font style as the body text and, like section headings, should not be numbered. Tertiary headings should be avoided, but if necessary, they are run-in, italic, and end in a period, as illustrated with the next six (6) paragraphs.
-\begin{equation}
-	\label{eq:ab}
-	a = b^{2}
-\end{equation}
-
-\subsubsection{Equations.} 
-Equations are centered with the equation number flush to the right. In the text, these equations should be referenced by name as Eq.~\eqref{eq:ab} or Equation~\eqref{eq:ab} (\emph{e.g}., not eq. 1, (1), or \emph{Equation 1}). To improve readability, scalar variable names such as $a$ and $b^{2}$ are usually italicized when appearing in text and equations.\footnote{A section on mathematical notation is provided in the sequel.}
-
-
-
-\subsubsection{Abbreviations.} 
-When abbreviations for units of measure are used, lower case without periods is preferred in most instances; \emph{e.g}. ft, yd, sec, ft/sec, \emph{etc}., but in. for inch.
-
-
-
 
 \begin{figure}[htb]
-	\centering\includegraphics[width=3.5in]{Figures/test}
-	\caption{Illustration Caption Goes Here}
-	\label{fig:xxx}
+	\centering\includegraphics[width=\textwidth]{Figures/HMatrix}
+	\caption{The final H matrix where $X_n$, $Y_n$, and $Z_n$ are the $X$, $Y$, and $Z$ coordinates of the $n$th camera (This was included as a figure since \LaTeX\ did not allow matrices this wide)}
+	\label{fig:HMatrix}
 \end{figure}
 
-\subsubsection{Figures.}   
-Illustrations are referenced by name and without formatting embellishments, such as Figure~\ref{fig:xxx}, Figure 2, \emph{etc}., or, Figures 3 and 4 (\emph{e.g}., not figure (1), Fig. 1, \underline{Figure 1}, \emph{Figure 1}, \emph{etc}.). Each illustration should have a caption unless it is a mere sketch. Single-phrase captions are usually in title case; they are bold 10-point serif font and centered below the figure as shown in Figure~\ref{fig:xxx}. An explanatory caption of several sentences is permissible. Ideally, every illustration should be legibly sized -- usually about one-half or one-quarter page -- and appear in the text just before it is called out or mentioned. Alternatively, it is also permissible to place all figures together at the end of the text as a separate appendix; however, these two conventions should not be mixed. All figures and callouts should remain clearly legible after reduction. All illustrations appear as black and white in the final printing, although colors are retained in the electronic (CD-ROM) version.
+\section{Filter Setup}
+
+Using the aforementioned dynamics and measurement model, a hybrid Extended Kalman filter and an Unscented Kalman filter were implemented. The hybrid EKF algorithm that was used for this study can be seen in Algorithm \ref{alg:EKF}. The UKF algorithm used for this study can be seen in Algorithm \ref{alg:UKF}. The MATLAB implementation of these algorithms can be seen in the Appendix.
+
+\begin{algorithm}[H]
+\footnotesize
+\caption{Hybrid Extended Kalman filter}
+\label{alg:EKF}
+\begin{algorithmic}[1]
+\State Recognize system equations $\hat{x}=f(x,u,w,t), y_k=h_k(x_k,v_k), w(t)\sim(0,Q), v_k\sim(0,R)$
+\State Initialize $x_{initial}$, $P$, $Q$, $R$
+\State Set $\hat{x}_{k-1}^+ \gets x_{initial}$, $P_{k-1}^+ \gets P$
+\For{each measurement $y$}
+    \State Assemble $y_{obs}$ by reading in measurements at $t_k$
+    \State $dt \gets t_k - t_{k-1}$
+    \State $\hat{x}_k^- \gets$ propagate $\hat{x}_{k-1}^+$ using the dynamics $\dot{\hat{x}}_k$ over $dt$ using ode45
+    \State $A \gets$ assemble according to Eq. \ref{eq:A}
+    \State $\dot{P} \gets AP_{k-1}^+ + P_{k-1}^+A^T + Q$
+    \State Assemble $y_{comp}$ according to Eq. \ref{eq:G} using $\hat{x}_k^-$
+    \State Assemble $H_k$ according to Eq. \ref{eq:H} using $\hat{x}_k^-$ and coordinates in Table \ref{tab:cameras}
+    \State $P_k^- \gets P_{k-1}^+ + \dot{P}\times dt$
+    \State $K_k \gets P_k^- H_k^T(H_kP_k^-H_k^T+R)^{-1}$
+    \State $\hat{x}_k^+ \gets \hat{x}_k^- + K_k(y_{obs}-y_{comp}$
+    \State $P_k^+\gets (I_{12}-K_kH_k)P_k^-(I_{12}-K_kH_k)^T + R$
+\EndFor
+\end{algorithmic}
+\end{algorithm}
 
 
-\subsubsection{Graphic Formats.} 
-The highest quality formats are Encapsulated PostScript (EPS) and PDF vector-graphic formats. These formats are recommended for all illustrations, unless they create document files that are excessively large. Specifically, you should change the graphic format or compress the image resolution whenever an illustrated page takes more than two seconds to render onscreen, or, whenever the total manuscript file size starts to approach 5 Mb. Photographs, illustrations that use heavy toner or ink (such as bar graphs), and figures without text callouts, may be suitably displayed with picture formats such as BMP, GIF, JPEG, PNG, TIFF, \emph{etc}. Line drawings, plots, and callouts on illustrations, should not use picture formats that do not provide sharp reproduction. All graphical content must be embedded when creating a PDF document, especially any fonts used within the illustration. Note that the Windows Metafile Format (WMF) is sometimes problematic and should be avoided.
+\begin{algorithm}[H]
+\footnotesize
+\caption{Unscented Kalman filter}
+\label{alg:UKF}
+\begin{algorithmic}[1]
+\State Recognize system equations $x_{k+1}=f(x_k,u_k,t_k)+w_k, y_k=h(x_k,t_k)+v_k, w(t)\sim(0,Q_k), v_k\sim(0,R_k)$
+\State Initialize $x_{initial}$, $P$, $Q$, $R$
+\State Set $\hat{x}_{k-1}^+ \gets x_{initial}$, $P_{k-1}^+ \gets P$, $n \gets$ number of states
+\For{each measurement $y$}
+    \State Assemble $y_{obs}$ by reading in measurements at $t_k$
+    \State $dt \gets t_k - t_{k-1}$
+    \For{j=1:2n}
+    		\State $\hat{x}_{k-1}^{(i)} \gets \hat{x}_{k-1}^+ + \tilde{x}^{(i)}; \quad i=1,\cdots,2n$
+    		\State $\tilde{x}^{(i)} \gets (\sqrt{nP_{k-1}^+})_i^T; \quad i=1,\cdots,n$
+    		\State $\tilde{x}^{(n+i)} \gets -(\sqrt{nP_{k-1}^+})_i^T; \quad i=1,\cdots,n$
+    	\EndFor
+    \State $\hat{x}_k^{(i)} \gets$ propagate $\hat{x}_{k-1}^{(i)}$ using the dynamics $\dot{\hat{x}}_k^{(i)}$ over $dt$ using ode45
+    \State $\hat{x}_k^- \gets \frac{1}{2n}\sum_{i=1}^{2n}\hat{x}_k^{(i)}$
+    \State $P_k^- \gets \frac{1}{2n}\sum_{i=1}^{2n}(\hat{x}_k^{(i)}-\hat{x}_k^-)(\hat{x}_k^{(i)}-\hat{x}_k^-)^T + Q_{k-1}$
+    \For{j=1:2n}
+    		\State $\hat{x}_{k}^{(i)} \gets \hat{x}_{k}^+ + \tilde{x}^{(i)}; \quad i=1,\cdots,2n$
+    		\State $\tilde{x}^{(i)} \gets (\sqrt{nP_{k}^+})_i^T; \quad i=1,\cdots,n$
+    		\State $\tilde{x}^{(n+i)} \gets -(\sqrt{nP_{k}^+})_i^T; \quad i=1,\cdots,n$
+    	\EndFor
+    \State Assemble $\hat{y}_{k}^{(i)}$ according to Eq. \ref{eq:G} using $\hat{x}_k^{(i)}$
+    \State $\hat{y}_k \gets \frac{1}{2n}\sum_{i=1}^{2n}\hat{y}_k^{(i)}$
+    \State $P_y \gets \frac{1}{2n}\sum_{i=1}^{2n}(\hat{y}_k^{(i)}-\hat{y}_k)(\hat{y}_k^{(i)}-\hat{y}_k)^T + R_k$
+    \State $P_{xy} \gets \frac{1}{2n}\sum_{i=1}^{2n}(\hat{x}_k^{(i)}-\hat{x}_k^-)(\hat{y}_k^{(i)}-\hat{y}_k)^T$
+    \State $K_k \gets P_{xy}P_y^{-1}$
+    \State $\hat{x}_k^+ \gets \hat{x}_k^- + K_k(y_{obs}-\hat{y}_k)$
+    \State $P_k^+ \gets P_k^- - K_kP_yK_k^T$
+\EndFor
+\end{algorithmic}
+\end{algorithm}
 
+\section{Experimental Procedure}
 
-\subsubsection{References and Citations.} 
-The citation of bibliographical endnote references is indicated in the text by superscripted Arabic numerals, preferably at the end of a sentence.\cite{doe2005, style1959}   If this citation causes confusion in mathematics, or if a superscript is inappropriate for other reasons, this may be alternately expressed as (Reference~\citenum{doe2005}) or (see References~\citenum{doe2005} and \citenum{style1959}), (\emph{e.g}., not [1], Ref. (1), \emph{etc}.). While there is no singly prescribed format for every bibliographical endnote, references should be consistent in form. Citations should be sufficient to allow the reader to precisely find the information being cited, and should include specific pages, editions, and printing numbers where necessary. URL citations are discouraged, especially when an archival source for the same information is available. If a URL citation is required, it should appear completely and as a footnote instead of a bibliographical reference.\footnote{\url{http://www.univelt.com/FAQ.html\#SUBMISSION}}  The citation of private communication is especially discouraged, but if required it should be cited as a footnote and include the date, professional affiliation, and location of the person cited.\footnote{Gangster, Maurice (1999), personal correspondence of March 21st. Sr. Consultant, Space Cowboy Associates, Inc., Colorado Springs, CO.}  
+The range measurements from the cameras and the roll, pitch, yaw measurements from the IMU were stored as ROSbags, and were read into MATLAB. The a priori state was measured during every experiment. The a priori state covariance, $P_0^+$ was set to \codeword{diag([(0.001)^2 (0.001)^2 (0.001)^2 0 0 0 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2 0 0 0])}, since it is possible that there were errors on the scale of millimeters when measuring the starting position of the drone, $3.8785\cdot 10^{-5}$ radians of error from the IMU measurements (according to the standard deviation of the measurements when the drone was at rest), and 0 error in the velocities and angular rates since it was at rest. The variance of the Vicon Vantage V16 motion capture cameras was specified to be $1.5$ mm in their specsheet \cite{vicon_2022}. However, such small variances did not show how robust the filters' to non-ideal conditions. Hence, the variances of each of the four cameras' range measurements was set as $0.0015^2$ m, $0.015^2$ m, $0.002^2$ m, and $0.1^2$ m to showcase the filters' robustness, and the aforementioned $3.8785\cdot 10^{-5}$ radians of error was used for the IMU measurements. Hence, the covariance matrix of the measurements was set as \codeword{R = diag([0.0015^2 0.015^2 0.002^2 0.1^2 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2])}.
 
+Four types of trajectories were used to analyze the performance of the filters for this study:
+\begin{enumerate}[label=(\alph*)]
+\item Hover - The drone hovers to a height of 3 m and lands (as seen in Figure \ref{fig:hover1_just_traj})
+\item Circle - The drone hovers to a height of 3 m and starts flying in a circle with radius 1 m (as seen in Figure \ref{fig:circle1_just_traj})
+\item Sine - The drone hovers to a height of 3 m and flies in a sine wave in the +x-direction (as seen in Figure \ref{fig:sine1_just_traj})
+\item Square - The drone hovers to a height of 3 m and flies in a square with a sidelength of 4 m (as seen in Figure \ref{fig:square1_just_traj})
+\end{enumerate}
 
+% TODO: change the size of this later
+\begin{figure}[H]
+\centering
+\begin{subfigure}{.3\textwidth}
+	\centering
+	\includegraphics[width=0.9\textwidth]{../circle1_just_traj}
+	\caption{Hover trajectory!!!}
+	\label{fig:hover1_just_traj}
+\end{subfigure}%
+\begin{subfigure}{.3\textwidth}
+	\centering
+	\includegraphics[width=0.9\textwidth]{../circle1_just_traj}
+	\caption{Circle trajectory}
+	\label{fig:circle1_just_traj}
+\end{subfigure}
+\begin{subfigure}{.3\textwidth}
+	\centering
+	\includegraphics[width=0.9\textwidth]{../circle1_just_traj}
+	\caption{Sine trajectory!!!}
+	\label{fig:sine1_just_traj}
+\end{subfigure}%
+\begin{subfigure}{.3\textwidth}
+	\centering
+	\includegraphics[width=0.9\textwidth]{../circle1_just_traj}
+	\caption{Square trajectory!!!}
+	\label{fig:square1_just_traj}
+\end{subfigure}
+\caption{The trajectories that the drone followed}
+\label{fig:DroneTrajectories}
+\end{figure}
 
-\begin{table}[htbp]
-	\fontsize{10}{10}\selectfont
-    \caption{A Caption Goes Here}
-   \label{tab:label}
-        \centering 
-   \begin{tabular}{c | r | r } % Column formatting, 
-      \hline 
-      Animal    & Description & Price (\$)\\
-      \hline 
-      Gnat      & per gram & 13.65 \\
-                & each     &  0.01 \\
-      Gnu       & stuffed  & 92.50 \\
-      Emu       & stuffed  & 33.33 \\
-      Armadillo & frozen   &  8.99 \\
-      \hline
-   \end{tabular}
+The default sampling rate of the cameras was at 120 Hz, but the stored data was modified to replicate a measurement rate of 60 Hz, 24 Hz, 12 Hz, 6 Hz, and an extreme of 1 Hz, and the performance of the filters over these measurement rates was compared.
+
+\section{Results and Discussion}
+
+The results of the hybrid Extended Kalman filter will be discussed first. The standard deviations of errors in position estimates for the different trajectories at various sampling rates can be seen in Tables \ref{tab:sigmax} through \ref{tab:sigmaz}.
+
+% TODO discuss Q
+
+\begin{table}[htb]
+\centering
+\caption{Standard deviation of x-position error}
+\label{tab:sigmax}
+\begin{tabular}{|r|llll|}
+\hline
+\multicolumn{1}{|l|}{\multirow{2}{*}{\backslashbox{Sample Rate}{Trajectory Type}}} & \multicolumn{4}{c|}{$\sigma_x$ (in m)}                                                                            \\ \cline{2-5} 
+\multicolumn{1}{|l|}{}                                                             & \multicolumn{1}{c}{Hover} & \multicolumn{1}{c}{Circle} & \multicolumn{1}{c}{Square} & \multicolumn{1}{c|}{Sine} \\ \hline
+120 Hz                                                                             & 0.0039932                 & 0.0085408                  & 0.0080575                  & 0.0049977                 \\
+60 Hz                                                                              & 0.0051788                 & 0.010278                   & 0.0096354                  & 0.0057264                 \\
+24 Hz                                                                              & 0.0056789                 & 0.013199                   & 0.011393                   & 0.0074061                 \\
+12 Hz                                                                              & 0.0074068                 & 0.014731                   & 0.012044                   & 0.0085448                 \\
+6 Hz                                                                               & 0.0081106                 & 0.016047                   & 0.012508                   & 0.0087954                 \\
+1 Hz                                                                               & 0.0095391                 & 0.029615                   & 0.015374                   & 0.013841                  \\ \hline
+\end{tabular}
 \end{table}
 
-\emph{Tables.} 
-Tables are referred to by name in the text as Table~\ref{tab:label}, or, Tables 2 and 3 (\emph{e.g}., not table 1, Tbl. 1, or \emph{Table 1}). The title is centered above the table, as shown in Table 1. The font size inside tables should be no larger than the body text, but may be adjusted down to 9-point if necessary (10-point serif font is considered nominal). Note that table units are in parentheses. Only the minimum number of table lines needed for clarity is desired. Ideally, every table should appear within the text just before it is called out, but, it is also permissible to place all tables together at the end of the text as a separate appendix. If so, these two conventions should not be mixed.
+\begin{table}[htb]
+\centering
+\caption{Standard deviation of y-position error}
+\label{tab:sigmay}
+\begin{tabular}{|r|llll|}
+\hline
+\multicolumn{1}{|l|}{\multirow{2}{*}{\backslashbox{Sample Rate}{Trajectory Type}}} & \multicolumn{4}{c|}{$\sigma_y$ (in m)}                                                                          \\ \cline{2-5} 
+\multicolumn{1}{|l|}{}                                                             & \multicolumn{1}{c}{Hover} & \multicolumn{1}{c}{Circle} & \multicolumn{1}{c}{Square} & \multicolumn{1}{c|}{Sine} \\ \hline
+120 Hz                                                                             & 0.0040409                 & 0.0084944                  & 0.0080132                  & 0.0049065                 \\
+60 Hz                                                                              & 0.0052825                 & 0.010371                   & 0.0095661                  & 0.005823                  \\
+24 Hz                                                                              & 0.0056995                 & 0.012979                   & 0.011269                   & 0.0074443                 \\
+12 Hz                                                                              & 0.007463                  & 0.014687                   & 0.011893                   & 0.0089392                 \\
+6 Hz                                                                               & 0.0084155                 & 0.015925                   & 0.012634                   & 0.0087636                 \\
+1 Hz                                                                               & 0.0086878                 & 0.02909                    & 0.015167                   & 0.013621                  \\ \hline
+\end{tabular}
+\end{table}
 
-Equations, figures, and tables must be sequentially numbered with no repeated numbers or gaps. Each figure and table shall be called out in the text; gratuitous figures and tables that are not called out should be eliminated. Intermediate equations may be numbered without being called out.
+\begin{table}[htb]
+\centering
+\caption{Standard deviation of z-position error}
+\label{tab:sigmaz}
+\begin{tabular}{|r|llll|}
+\hline
+\multicolumn{1}{|l|}{\multirow{2}{*}{\backslashbox{Sample Rate}{Trajectory Type}}} & \multicolumn{4}{c|}{$\sigma_z$ (in m)}                                                                          \\ \cline{2-5} 
+\multicolumn{1}{|l|}{}                                                             & \multicolumn{1}{c}{Hover} & \multicolumn{1}{c}{Circle} & \multicolumn{1}{c}{Square} & \multicolumn{1}{c|}{Sine} \\ \hline
+120 Hz                                                                             & 0.0031726                 & 0.0030319                  & 0.0035243                  & 0.010083                  \\
+60 Hz                                                                              & 0.0028092                 & 0.0032654                  & 0.0040193                  & 0.012393                  \\
+24 Hz                                                                              & 0.0024405                 & 0.0036128                  & 0.004693                   & 0.015404                  \\
+12 Hz                                                                              & 0.0027021                 & 0.0046044                  & 0.0048127                  & 0.019746                  \\
+6 Hz                                                                               & 0.0024644                 & 0.0041818                  & 0.0056552                  & 0.017945                  \\
+1 Hz                                                                               & 0.01566                   & 0.01327                    & 0.0088481                  & 0.030748                  \\ \hline
+\end{tabular}
+\end{table}
 
-
-
-
-\section{Manuscript Submission}
-The Portable Document Format (PDF) is the preferred format for electronic submissions.\footnote{By contributing your manuscript for proceedings publication, you necessarily extend any copyrights to the AAS and its designated publisher, to allow the AAS to publish your manuscript content in all the forms that it wishes.}
- The page size should be 8.5 inches by 11 inches exactly. You should use ``press-quality'' or ``high-quality'' software settings to create your PDF file; these settings tend to keep the PDF file true to the original manuscript layout, and automatically embed the correct fonts, \emph{etc}. Otherwise, settings such as ``Embed All Fonts'', \emph{etc}., should be selected as available. The use of internal hyperlinks within the electronic file is not encouraged because hyperlinks may not be supported in the final version of the electronic proceedings.
-
-\subsection{Journal Submission}
-If you wish to submit this manuscript to the \emph{Journal of Astronautical Sciences}, it must be re-formatted into a double-spaced format. This can be done easily with this template. At the top of the document, there are two (2) types document class statements ({\tt paper} and {\tt submit}).  The first type is the one to use for a conference paper.  The second type , which is commented out, can be used to reformat the paper for the JAS journal submission.
-
+It can be seen from Tables \ref{tab:sigmax} through \ref{tab:sigmaz} that the error in actual position and estimated position increases for all trajectories as the sampling rate is decreased. This is intuitive because as the resolution of data decreases, the system has to use its knowledge of the system's dynamics to propagate itself to the next state, and this may differ from the system's real-life behavior since many approximations were made to linearize the system's dynamics. This also explains why the magnitude of error in the z-direction is lower than the error in the x and y directions, since the drone does not move much in the z directions while performing the trajectory, therefore only causing small deviations from the actual. (WHAT) That being said, the filter is still accurate to a hundredth of a meter, and having centimeter level accuracy is incredible when considering that the errors in the measurements from the motion capture cameras were greatly exaggerated (used $1.5$ mm, $1.5$ cm, $2$ mm, and $10$ cm in each of the four cameras instead of the rated values of $1.5$ mm\cite{vicon_2022}).
 
 \section{Conclusion}
-Some AAS meetings are co-sponsored with the American Institute of Aeronautics and Astronautics (AIAA). When your paper number starts with ``AAS'', or when the conference is described as a joint ``AAS/AIAA'' meeting with the AAS listed first, this AAS conference proceedings format shall be used.
-
-Your final manuscript should be camera-ready as submitted --- free from technical, typographical, and formatting errors. Manuscripts not suitable for publication are omitted from the final proceedings.
 
 
 \section{Acknowledgment}
-Any acknowledgments by the author may appear here. The acknowledgments section is optional.
 
-
-
-
-
-
-\section{Notation}
-\begin{tabular}{r l}
-	$a$ & a real number \\
-	$b$ &  the square root of $a$ \\
-\end{tabular} \\
-
-If extensive use of mathematical symbols requires a table of notation, that table may appear here. Where the first mathematical symbol is introduced, a footnote should direct the attention of the reader to this table.\footnote{The footnote symbols are a standard sequence: $\ast$, $\dagger$, $\ddag$, \emph{etc}. This sequence of footnote symbols should restart with each new page.}  The notation table should be simple and reasonably consistent with the standards of modern technical journals, as illustrated above. The notation table does not need its own caption like an ordinary table, since the section heading serves this purpose. The notation section is optional.
-
-
-
-
+Thanks to Dr. Brian Gunter for a great semester. I'd heard of Kalman filters through my work in the past, but I hadn't known how they worked. The PhD student I was working with during my last semester at UT Austin's Autonomous Systems Group told me I'd learn about them in graduate school, and I got to learn about them from Dr. Gunter. I learned a lot through this class, and I'm looking forward to working more intricately with Kalman filters. 
 
 \appendix
 \section*{Appendix: Title here}
-Each appendix is its own section with its own section heading. The title of each appendix section is preceded by ``APPENDIX: '' as illustrated above, or ``APPENDIX A: '', ``APPENDIX B: '', \emph{etc}., when multiple appendixes are necessary. Appendices are optional and normally go after references; however, appendices may go ahead of the references section whenever the word processor forces superscripted endnotes to the very end of the document. The contents of each appendix must be called out at least once in the body of the manuscript.
-
-
-\subsection*{Miscellaneous Physical Dimensions}
-The page size shall be the American standard of 8.5 inches by 11 inches (216 mm x 279 mm). Margins are as follows: Top -- 0.75 inch (19 mm); Bottom -- 1.5 inches (38 mm); Left -- 1.25 inches (32 mm); Right -- 1.25 inch (32 mm). The title of the manuscript starts one inch (25.4 mm) below the top margin. Column width is 6 inches (152.5 mm) and column length is 8.75 inches (222.5 mm). The abstract is 4.5 inches (114 mm) in width, centered, justified, 10 point normal (serif) font.
 
 
 \bibliographystyle{AAS_publication}   % Number the references.
 \bibliography{references}   % Use references.bib to resolve the labels.
-
 
 
 \end{document}

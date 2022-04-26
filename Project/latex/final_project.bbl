@@ -20,13 +20,10 @@ Tobias, W.~H. says:, T.~Says:, C.~B. says:, A.~Says:, M.~says:, J.~says:,
 \bibitem{iris}
 ``3DR iris - the ready to fly UAV Quadcopter,''
 
-\bibitem{doe2005}
-J.~L. Doe and J.~Q. Public, ``The Parameterization of the Rotation Matrix using
-  Redundant Attitude Coordinates,''  {\em Nonlinear Dynamics}, Vol.~32, No.~3,
-  2005, pp.~71--92.
+\bibitem{X4dot}
+A.~Gibiansky, ``Andrew Gibiansky - Quadcopter Dynamics and Simulation,''
 
-\bibitem{style1959}
-{\em Style Manual}.
-\newblock New York 17, New York: American Institute of Physics, 2nd~ed., 1959.
+\bibitem{LQR}
+``Linear-Quadratic Regulator (LQR) design,''
 
 \end{thebibliography}
