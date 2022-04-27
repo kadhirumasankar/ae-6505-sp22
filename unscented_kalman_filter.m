@@ -2,8 +2,7 @@ clc; clear all; close all;
 
 %% Prepping state data
 bag_list = ["circle", "hover", "sine", "square"];
-% freq_list = [1 2 5 10 20 60 120];
-freq_list = [60];
+freq_list = [1 2 5 10 20 60 120];
 
 for bag_idx = 1:length(bag_list)
 for freq_idx = 1:length(freq_list)

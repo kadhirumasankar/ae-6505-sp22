@@ -3,9 +3,8 @@ clc; clear all; close all;
 %% Prepping state data
 
 bag_list = ["circle", "hover", "sine", "square"];
-% bag_list = ["hover"];
-freq_list = [1 2 5 10 20 60 120];
-% freq_list = [1];
+% freq_list = [1 2 5 10 20 60 120];
+freq_list = [60];
 
 for bag_idx = 1:length(bag_list)
 for freq_idx = 1:length(freq_list)
@@ -24,8 +23,8 @@ cam4loc = [10, -10, 10]';
 % Initial conditions
 P = diag([(0.001)^2 (0.001)^2 (0.001)^2 (0.001)^2 (0.001)^2 (0.001)^2 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2]);
 Q = eye(12).*1e-3;
-R = diag([0.0015^2 0.015^2 0.002^2 0.1^2 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2]);
-% R = diag([0.0015^2 0.0015^2 0.0015^2 0.0015^2 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2]);
+R = diag([0.0015^2 0.015^2 0.002^2 0.1^2 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2]); % Perturbed R
+% R = diag([0.0015^2 0.0015^2 0.0015^2 0.0015^2 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2]); % Actual R
 
 shape = bag_list(bag_idx);
 sample_freq = freq_list(freq_idx);
@@ -150,7 +149,7 @@ if shape == "hover"
     xlim([-1 1])
     ylim([-1 1])
 end
-saveas(gcf, strcat(shape, num2str(sample_freq), '_BETTER_traj.png'))
+saveas(gcf, strcat(shape, num2str(sample_freq), '_traj.png'))
 
 err = store_x - states;
 
@@ -179,7 +178,7 @@ ylabel("z position (m)")
 xlabel("Time (s)")
 legend("Estimated", "Actual", "Location", "best")
 sgtitle("Comparison of Actual and Estimated states")
-saveas(gcf, strcat(shape, num2str(sample_freq), '_BETTER_compare.png'))
+saveas(gcf, strcat(shape, num2str(sample_freq), '_compare.png'))
 
 figure(3)
 subplot(3,1,1)
@@ -202,13 +201,13 @@ grid on
 ylabel("z position error (m)")
 xlabel("Time (s)")
 sgtitle("Error between Actual and Estimated states")
-saveas(gcf, strcat(shape, num2str(sample_freq), '_BETTER_err.png'))
+saveas(gcf, strcat(shape, num2str(sample_freq), '_err.png'))
 
 writematrix([std(err(1,:));
              std(err(2,:));
              std(err(3,:));
              strcat(num2str(1/mean(time(2:end) - time(1:end-1))*1.2), "Hz");
-             strcat(num2str(mean(timeElapsedArray)),"s per timestep")], strcat(shape, num2str(sample_freq), '_BETTER_std.csv'))
+             strcat(num2str(mean(timeElapsedArray)),"s per timestep")], strcat(shape, num2str(sample_freq), '_std.csv'))
 end
 end
 
