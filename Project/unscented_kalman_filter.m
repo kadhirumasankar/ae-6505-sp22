@@ -1,11 +1,9 @@
 clc; clear all; close all;
 
 %% Prepping state data
-
 bag_list = ["circle", "hover", "sine", "square"];
-% bag_list = ["hover"];
 % freq_list = [1 2 5 10 20 60 120];
-freq_list = [1];
+freq_list = [20];
 
 for bag_idx = 1:length(bag_list)
 for freq_idx = 1:length(freq_list)
@@ -21,14 +19,11 @@ cam2loc = [-10, 10, 10]';
 cam3loc = [-10, -10, 10]';
 cam4loc = [10, -10, 10]';
 
-% Initial conditions
-P = diag([(0.001)^2 (0.001)^2 (0.001)^2 (0.001)^2 (0.001)^2 (0.001)^2 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2]);
-Q = eye(12).*1e-3;
-% R = diag([0.0015^2 0.015^2 0.002^2 0.1^2 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2]);
-R = diag([0.0015^2 0.0015^2 0.0015^2 0.0015^2 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2]);
+R = diag([0.0015^2 0.015^2 0.002^2 0.1^2 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2]);
 
 shape = bag_list(bag_idx);
 sample_freq = freq_list(freq_idx);
+
 
 data = importdata(strcat(shape, "_actual_states.csv"));
 measurementdata = importdata(strcat(shape, "_measurements.csv"));
@@ -46,8 +41,13 @@ for i = 1:size(data,2)
         time = [time data(end, i)];
     end
 end
-x_(:,1) = states(:,1); % Using the first column from the data
 time = time./1e9;
+
+% Initial conditions
+P = diag([(0.001)^2 (0.001)^2 (0.001)^2 (0.001)^2 (0.001)^2 (0.001)^2 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2]);
+Q = eye(12).*1e-3;
+x_(:,1) = states(:,1); % Using the first column from the data
+n = length(x_);
 disp("Everything in SI, angles in radians")
 
 %%
@@ -58,7 +58,7 @@ xlabel('x (m)')
 ylabel('y (m)')
 zlabel('z (m)')
 title('Trajectory of Drone')
-legend('Observed', 'Predicted', 'Location', 'best')
+% legend('Observed', 'Predicted', 'Location', 'best')
 if shape == "hover"
     xlim([-1 1])
     ylim([-1 1])
@@ -69,75 +69,90 @@ end
 
 store_x = [x_(:,1)];
 store_P = [norm(diag(P))];
-
 timeElapsedArray = [];
 for i=2:size(measurements,2)
     tic;
     dt = time(i) - time(i-1);
-%   Observed
+    % Observed
     y_obs(:,i) = measurements(:, i);
-  
-%   Propagation of state
-    if dt ~= 0
-        [t_out, y_out] = ode45(@(t,y) drone_dynamics(t, y, target_states(:,i-1), m, Ixx, Iyy, Izz, g), [0 dt], x_(:, i-1), odeset('RelTol',1e-2,'AbsTol',1e-4));
+    
+    xhat_k_1 = [];
+    % Sigma points
+    for j = 1:2*n
+        if j<=n
+            xtilda = chol(n*P);
+            xtilda = xtilda(j,:)';
+        else
+            xtilda = -chol(n*P);
+            xtilda = xtilda(j-n,:)';
+        end
+        xhat_k_1 = [xhat_k_1 x_(:,i-1)+xtilda];
     end
-
-    x_(:,i) = y_out(end,:)';
-
-    % Propagation of state covariance
-    A = find_A(x_(:,i-1), m, Ixx, Iyy, Izz, g);
-    Pdot = A*P + P*A' + Q;
-    P = P + Pdot*dt;
-  
-%   Assembling y_comp
-    y_comp(:,i) = [vecnorm(x_(1:3,end)-cam1loc);
-                   vecnorm(x_(1:3,end)-cam2loc);
-                   vecnorm(x_(1:3,end)-cam3loc);
-                   vecnorm(x_(1:3,end)-cam4loc);
-                   x_(7,end);
-                   x_(8,end);
-                   x_(9,end)];
-
-%   Computing H using y_comp
-    X1 = cam1loc(1);
-    Y1 = cam1loc(2);
-    Z1 = cam1loc(3);
-    X2 = cam2loc(1);
-    Y2 = cam2loc(2);
-    Z2 = cam2loc(3);
-    X3 = cam3loc(1);
-    Y3 = cam3loc(2);
-    Z3 = cam3loc(3);
-    X4 = cam4loc(1);
-    Y4 = cam4loc(2);
-    Z4 = cam4loc(3);
-    drone_x = x_(1,end);
-    drone_y = x_(2,end);
-    drone_z = x_(3,end);
-    H = [-(X1 - drone_x)/((X1 - drone_x)^2 + (Y1 - drone_y)^2 + (Z1 - drone_z)^2)^(1/2), -(Y1 - drone_y)/((X1 - drone_x)^2 + (Y1 - drone_y)^2 + (Z1 - drone_z)^2)^(1/2), -(Z1 - drone_z)/((X1 - drone_x)^2 + (Y1 - drone_y)^2 + (Z1 - drone_z)^2)^(1/2), 0, 0, 0, 0, 0, 0, 0, 0, 0;
-         -(X2 - drone_x)/((X2 - drone_x)^2 + (Y2 - drone_y)^2 + (Z2 - drone_z)^2)^(1/2), -(Y2 - drone_y)/((X2 - drone_x)^2 + (Y2 - drone_y)^2 + (Z2 - drone_z)^2)^(1/2), -(Z2 - drone_z)/((X2 - drone_x)^2 + (Y2 - drone_y)^2 + (Z2 - drone_z)^2)^(1/2), 0, 0, 0, 0, 0, 0, 0, 0, 0;
-         -(X3 - drone_x)/((X3 - drone_x)^2 + (Y3 - drone_y)^2 + (Z3 - drone_z)^2)^(1/2), -(Y3 - drone_y)/((X3 - drone_x)^2 + (Y3 - drone_y)^2 + (Z3 - drone_z)^2)^(1/2), -(Z3 - drone_z)/((X3 - drone_x)^2 + (Y3 - drone_y)^2 + (Z3 - drone_z)^2)^(1/2), 0, 0, 0, 0, 0, 0, 0, 0, 0;
-         -(X4 - drone_x)/((X4 - drone_x)^2 + (Y4 - drone_y)^2 + (Z4 - drone_z)^2)^(1/2), -(Y4 - drone_y)/((X4 - drone_x)^2 + (Y4 - drone_y)^2 + (Z4 - drone_z)^2)^(1/2), -(Z4 - drone_z)/((X4 - drone_x)^2 + (Y4 - drone_y)^2 + (Z4 - drone_z)^2)^(1/2), 0, 0, 0, 0, 0, 0, 0, 0, 0;
-         0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0;
-         0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0;
-         0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]; 
-
-%   Kalman gain
-    K = P*H'*inv(H*P*H'+R);
     
-    % Measurement update
-    x_(:,i) = x_(:,i) + K * (y_obs(:,i) - y_comp(:,i));
+    % Propagation of state
+    xhat_k = [];
+    for j = 1:2*n
+        current_x = xhat_k_1(:,j);
+        if dt ~= 0
+            [t_out, y_out] = ode45(@(t,y) drone_dynamics(t, y, target_states(:,i-1), m, Ixx, Iyy, Izz, g), [0 dt], current_x, odeset('RelTol',1e-2,'AbsTol',1e-4));
+        end
+        xhat_k = [xhat_k y_out(end,:)'];
+    end
+    xhatk_ = sum(xhat_k, 2)/(2*n);
+    temp_Pk_ = 0;
+    for j = 1:2*n
+        temp_Pk_ = temp_Pk_ + (xhat_k(:,j) - xhatk_)*(xhat_k(:,j) - xhatk_)';
+    end
+    Pk_ = temp_Pk_/(2*n) + Q;
     
-    P = (eye(12)-K*H)*P*(eye(12)-K*H)' + K*R*K';
-  
+%     xhat_k = [];
+%     % Sigma points
+%     for j = 1:2*n
+%         if j<=n
+%             xtilda = chol(n*P);
+%             xtilda = xtilda(j,:)';
+%         else
+%             xtilda = -chol(n*P);
+%             xtilda = xtilda(j-n,:)';
+%         end
+%         xhat_k = [xhat_k xhatk_+xtilda];
+%     end
+    
+    % Assembling y_computed
+    y_comp = [];
+    for j = 1:2*n
+        current_x = xhat_k(:,j);
+        y1_comp = vecnorm(current_x(1:3)-cam1loc);
+        y2_comp = vecnorm(current_x(1:3)-cam2loc);
+        y3_comp = vecnorm(current_x(1:3)-cam3loc);
+        y4_comp = vecnorm(current_x(1:3)-cam4loc);
+        
+        y_comp = [y_comp [y1_comp; y2_comp; y3_comp; y4_comp; current_x(7); current_x(8); current_x(9)]];
+    end
+    y_comp_hat = sum(y_comp, 2)/(2*n);
+    
+    temp_Py = 0;
+    temp_Pxy = 0;
+    for j = 1:2*n
+        temp_Py = temp_Py + (y_comp(:,j) - y_comp_hat)*(y_comp(:,j) - y_comp_hat)';
+        temp_Pxy = temp_Pxy + (xhat_k(:,j)-xhatk_)*(y_comp(:,j)-y_comp_hat)';
+    end
+    Py = temp_Py/(2*n) + R;
+    Pxy = temp_Pxy/(2*n);
+    
+    K = Pxy*inv(Py);
+    x_(:,i) = xhatk_ + K*(y_obs(:,i) - y_comp_hat);
+    P = Pk_ - K*Py*K';
+    
     store_x = [store_x x_(:, i)];
-    store_P = [store_P norm(diag(P))];
-
     timeElapsed = toc;
     timeElapsedArray = [timeElapsedArray timeElapsed];
-    
+    figure(1)
+    hold on
+    scatter3(x_(1,i), x_(2,i), x_(3,i), 20, 'black')
     fprintf("%g%% done\n", round(i/size(measurements,2)*100))
 end
+
 figure(1)
 hold on
 scatter3(x_(1,:), x_(2,:), x_(3,:), 20, 'black')
@@ -147,7 +162,7 @@ if shape == "hover"
     xlim([-1 1])
     ylim([-1 1])
 end
-saveas(gcf, strcat(shape, num2str(sample_freq), '_BETTER_traj.png'))
+saveas(gcf, strcat(shape, num2str(sample_freq), '_traj_UKF.png'))
 
 err = store_x - states;
 
@@ -176,7 +191,7 @@ ylabel("z position (m)")
 xlabel("Time (s)")
 legend("Estimated", "Actual", "Location", "best")
 sgtitle("Comparison of Actual and Estimated states")
-saveas(gcf, strcat(shape, num2str(sample_freq), '_BETTER_compare.png'))
+saveas(gcf, strcat(shape, num2str(sample_freq), '_compare_UKF.png'))
 
 figure(3)
 subplot(3,1,1)
@@ -199,17 +214,44 @@ grid on
 ylabel("z position error (m)")
 xlabel("Time (s)")
 sgtitle("Error between Actual and Estimated states")
-saveas(gcf, strcat(shape, num2str(sample_freq), '_BETTER_err.png'))
+saveas(gcf, strcat(shape, num2str(sample_freq), '_err_UKF.png'))
 
-writematrix([std(err(1,:));
-             std(err(2,:));
-             std(err(3,:));
-             strcat(num2str(1/mean(time(2:end) - time(1:end-1))*1.2), "Hz");
-             strcat(num2str(mean(timeElapsedArray)),"s per timestep")], strcat(shape, num2str(sample_freq), '_BETTER_std.csv'))
+writematrix([std(err(1,:));std(err(2,:));std(err(3,:));strcat(num2str(1/mean(time(2:end) - time(1:end-1))*1.2), "Hz"); strcat(num2str(mean(timeElapsedArray)),"s per timestep")], strcat(shape, num2str(sample_freq), '_std_UKF.csv'))
 end
 end
 
 %% Functions
+
+function xhatdot = drone_dynamics(t, x, target_state, m, Ixx, Iyy, Izz, g)
+    x_pos = x(1);
+    y_pos = x(2);
+    z_pos = x(3);
+    x_vel = x(4);
+    y_vel = x(5);
+    z_vel = x(6);
+    roll = x(7);
+    pitch = x(8);
+    yaw = x(9);
+    roll_rate = x(10);
+    pitch_rate = x(11);
+    yaw_rate = x(12);
+    [u3, u4, u5, u6] = get_u(x, target_state, m, Ixx, Iyy, Izz, g);
+
+    xhatdot =[x_vel;
+              y_vel;
+              z_vel;
+              (u3*(sin(roll)*sin(yaw) + cos(roll)*cos(yaw)*sin(pitch)))/m;
+              -(u3*(cos(yaw)*sin(roll) - cos(roll)*sin(pitch)*sin(yaw)))/m;
+              -(g*m - u3*cos(pitch)*cos(roll))/m;
+              roll_rate + yaw_rate*cos(roll)*tan(pitch) + pitch_rate*tan(pitch)*sin(roll);
+              pitch_rate*cos(roll) - yaw_rate*sin(roll);
+              (yaw_rate*cos(roll))/cos(pitch) + (pitch_rate*sin(roll))/cos(pitch);
+              (u4 + Iyy*pitch_rate*yaw_rate - Izz*pitch_rate*yaw_rate)/Ixx;
+              (u5 - Ixx*roll_rate*yaw_rate + Izz*roll_rate*yaw_rate)/Iyy;
+              (u6 + Ixx*pitch_rate*roll_rate - Iyy*pitch_rate*roll_rate)/Izz];
+
+end
+
 function [u3 u4 u5 u6] = get_u(states, target_states, m, Ixx, Iyy, Izz, g)
     q7 = states(7);
     q8 = states(8);
@@ -277,34 +319,4 @@ function A = find_A(states, m, Ixx, Iyy, Izz, g)
                                     0, -(Ixx * q10 - Izz * q10) / Iyy;
          0, 0, 0, 0, 0, 0, 0, 0, 0, (Ixx * q11 - Iyy * q11) / Izz, ...
                                     (Ixx * q10 - Iyy * q10) / Izz, 0];
-end
-
-function xhatdot = drone_dynamics(t, x, target_state, m, Ixx, Iyy, Izz, g)
-    x_pos = x(1);
-    y_pos = x(2);
-    z_pos = x(3);
-    x_vel = x(4);
-    y_vel = x(5);
-    z_vel = x(6);
-    roll = x(7);
-    pitch = x(8);
-    yaw = x(9);
-    roll_rate = x(10);
-    pitch_rate = x(11);
-    yaw_rate = x(12);
-    [u3, u4, u5, u6] = get_u(x, target_state, m, Ixx, Iyy, Izz, g);
-
-    xhatdot =[x_vel;
-              y_vel;
-              z_vel;
-              (u3*(sin(roll)*sin(yaw) + cos(roll)*cos(yaw)*sin(pitch)))/m;
-              -(u3*(cos(yaw)*sin(roll) - cos(roll)*sin(pitch)*sin(yaw)))/m;
-              -(g*m - u3*cos(pitch)*cos(roll))/m;
-              roll_rate + yaw_rate*cos(roll)*tan(pitch) + pitch_rate*tan(pitch)*sin(roll);
-              pitch_rate*cos(roll) - yaw_rate*sin(roll);
-              (yaw_rate*cos(roll))/cos(pitch) + (pitch_rate*sin(roll))/cos(pitch);
-              (u4 + Iyy*pitch_rate*yaw_rate - Izz*pitch_rate*yaw_rate)/Ixx;
-              (u5 - Ixx*roll_rate*yaw_rate + Izz*roll_rate*yaw_rate)/Iyy;
-              (u6 + Ixx*pitch_rate*roll_rate - Iyy*pitch_rate*roll_rate)/Izz];
-
 end

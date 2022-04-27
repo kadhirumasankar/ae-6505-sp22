@@ -388,7 +388,7 @@
            AE-6505 Final Project}
            \else
             {\fontsize{14}{14}\selectfont \sffamily\bfseries
-            AAS~\AA@papernumber}
+            AE-6505 Final Project}
            \fi
           \\[25pt]
     \vskip 0.4in%

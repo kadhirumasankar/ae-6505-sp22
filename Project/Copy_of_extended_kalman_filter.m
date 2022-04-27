@@ -2,10 +2,10 @@ clc; clear all; close all;
 
 %% Prepping state data
 
-bag_list = ["circle", "hover", "sine", "square"];
-% bag_list = ["hover"];
-freq_list = [1 2 5 10 20 60 120];
-% freq_list = [20 60 120];
+% bag_list = ["circle", "hover", "sine", "square"];
+bag_list = ["circle"];
+% freq_list = [1 2 5 10 20 60 120];
+freq_list = [1];
 
 for bag_idx = 1:length(bag_list)
 for freq_idx = 1:length(freq_list)
@@ -22,10 +22,10 @@ cam3loc = [-10, -10, 10]';
 cam4loc = [10, -10, 10]';
 
 % Initial conditions
-x_(:,1) = states(:,1); % Using the first column from the data
 P = diag([(0.001)^2 (0.001)^2 (0.001)^2 (0.001)^2 (0.001)^2 (0.001)^2 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2]);
-Q = eye(12).*1e-1;
-R = diag([0.0015^2 0.015^2 0.002^2 0.1^2 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2]);
+Q = eye(12).*1e-3;
+% R = diag([0.0015^2 0.015^2 0.002^2 0.1^2 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2]);
+R = diag([0.0015^2 0.0015^2 0.0015^2 0.0015^2 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2]);
 
 shape = bag_list(bag_idx);
 sample_freq = freq_list(freq_idx);
@@ -46,11 +46,9 @@ for i = 1:size(data,2)
         time = [time data(end, i)];
     end
 end
+x_(:,1) = states(:,1); % Using the first column from the data
 time = time./1e9;
 disp("Everything in SI, angles in radians")
-
-
-%% Prepping measurement data
 
 %%
 % Visualizing data
@@ -128,7 +126,6 @@ for i=2:size(measurements,2)
     K = P*H'*inv(H*P*H'+R);
     
     % Measurement update
-    K * (y_obs(:,i) - y_comp(:,i))
     x_(:,i) = x_(:,i) + K * (y_obs(:,i) - y_comp(:,i));
     
     P = (eye(12)-K*H)*P*(eye(12)-K*H)' + K*R*K';
@@ -150,7 +147,7 @@ if shape == "hover"
     xlim([-1 1])
     ylim([-1 1])
 end
-saveas(gcf, strcat(shape, num2str(sample_freq), '_traj.png'))
+saveas(gcf, strcat(shape, num2str(sample_freq), '_BAK_traj.png'))
 
 err = store_x - states;
 
@@ -179,7 +176,7 @@ ylabel("z position (m)")
 xlabel("Time (s)")
 legend("Estimated", "Actual", "Location", "best")
 sgtitle("Comparison of Actual and Estimated states")
-saveas(gcf, strcat(shape, num2str(sample_freq), '_compare.png'))
+saveas(gcf, strcat(shape, num2str(sample_freq), '_BAK_compare.png'))
 
 figure(3)
 subplot(3,1,1)
@@ -202,15 +199,17 @@ grid on
 ylabel("z position error (m)")
 xlabel("Time (s)")
 sgtitle("Error between Actual and Estimated states")
-saveas(gcf, strcat(shape, num2str(sample_freq), '_err.png'))
+saveas(gcf, strcat(shape, num2str(sample_freq), '_BAK_err.png'))
 
 writematrix([std(err(1,:));
              std(err(2,:));
              std(err(3,:));
              strcat(num2str(1/mean(time(2:end) - time(1:end-1))*1.2), "Hz");
-             strcat(num2str(mean(timeElapsedArray)),"s per timestep")], strcat(shape, num2str(sample_freq), '_std.csv'))
+             strcat(num2str(mean(timeElapsedArray)),"s per timestep")], strcat(shape, num2str(sample_freq), '_BAK_std.csv'))
+writematrix([time; err(1:3, :)], "good_R.csv")
 end
 end
+
 %% Functions
 function [u3 u4 u5 u6] = get_u(states, target_states, m, Ixx, Iyy, Izz, g)
     q7 = states(7);
@@ -281,42 +280,6 @@ function A = find_A(states, m, Ixx, Iyy, Izz, g)
                                     (Ixx * q10 - Iyy * q10) / Izz, 0];
 end
 
-function x = propagate_state(last_state, target_state, dt, m, Ixx, Iyy, Izz, g)
-    x = last_state;
-    last_t = 0;
-    for t = linspace(1e-99,dt,20)
-        x_pos = x(1);
-        y_pos = x(2);
-        z_pos = x(3);
-        x_vel = x(4);
-        y_vel = x(5);
-        z_vel = x(6);
-        roll = x(7);
-        pitch = x(8);
-        yaw = x(9);
-        roll_rate = x(10);
-        pitch_rate = x(11);
-        yaw_rate = x(12);
-        [u3, u4, u5, u6] = get_u(x, target_state, m, Ixx, Iyy, Izz, g);
-
-        xhatdot =[x_vel;
-                  y_vel;
-                  z_vel;
-                  (u3*(sin(roll)*sin(yaw) + cos(roll)*cos(yaw)*sin(pitch)))/m;
-                  -(u3*(cos(yaw)*sin(roll) - cos(roll)*sin(pitch)*sin(yaw)))/m;
-                  -(g*m - u3*cos(pitch)*cos(roll))/m;
-                  roll_rate + yaw_rate*cos(roll)*tan(pitch) + pitch_rate*tan(pitch)*sin(roll);
-                  pitch_rate*cos(roll) - yaw_rate*sin(roll);
-                  (yaw_rate*cos(roll))/cos(pitch) + (pitch_rate*sin(roll))/cos(pitch);
-                  (u4 + Iyy*pitch_rate*yaw_rate - Izz*pitch_rate*yaw_rate)/Ixx;
-                  (u5 - Ixx*roll_rate*yaw_rate + Izz*roll_rate*yaw_rate)/Iyy;
-                  (u6 + Ixx*pitch_rate*roll_rate - Iyy*pitch_rate*roll_rate)/Izz];
-
-        x = x + xhatdot*(t-last_t);
-        last_t = t;
-    end
-end
-
 function xhatdot = drone_dynamics(t, x, target_state, m, Ixx, Iyy, Izz, g)
     x_pos = x(1);
     y_pos = x(2);
@@ -345,26 +308,4 @@ function xhatdot = drone_dynamics(t, x, target_state, m, Ixx, Iyy, Izz, g)
               (u5 - Ixx*roll_rate*yaw_rate + Izz*roll_rate*yaw_rate)/Iyy;
               (u6 + Ixx*pitch_rate*roll_rate - Iyy*pitch_rate*roll_rate)/Izz];
 
-end
-
-function out = get_marker_locs(state)
-    x = state(1);
-    y = state(2);
-    z = state(3);
-    roll = state(7);
-    pitch = state(8);
-    yaw = state(9);
-    marker_1_loc = [0; 0; 0.05];
-    marker_2_loc = [0.105; 0; 0];
-    marker_3_loc = [0; 0.06; 0];
-    marker_4_loc = [-0.115; 0; 0];
-    marker_5_loc = [0; -0.06; 0];
-    R = [cos(pitch)*cos(yaw) cos(pitch)*sin(yaw) -sin(pitch);
-         sin(roll)*sin(pitch)*cos(yaw)-cos(roll)*sin(yaw) sin(roll)*sin(pitch)*sin(yaw)+cos(roll)*cos(yaw) sin(roll)*cos(pitch);
-         cos(roll)*sin(pitch)*cos(yaw)+sin(roll)*sin(yaw) cos(roll)*sin(pitch)*sin(yaw)-sin(roll)*cos(yaw) cos(roll)*cos(pitch)]';
-     out = [state(1:3) + R*marker_1_loc;
-           state(1:3) + R*marker_2_loc;
-           state(1:3) + R*marker_3_loc;
-           state(1:3) + R*marker_4_loc;
-           state(1:3) + R*marker_5_loc];
 end

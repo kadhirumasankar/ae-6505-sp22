@@ -1,7 +1,7 @@
 % use paper, or submit
 % use 11 pt (preferred), 12 pt, or 10 pt only
 
-\documentclass[letterpaper, preprint, paper,11pt]{AAS}	% for preprint proceedings
+\documentclass[letterpaper, paper,11pt]{AAS}	% for preprint proceedings
 %\documentclass[letterpaper, paper,11pt]{AAS}		% for final proceedings (20-page limit)
 %\documentclass[letterpaper, paper,12pt]{AAS}		% for final proceedings (20-page limit)
 %\documentclass[letterpaper, paper,10pt]{AAS}		% for final proceedings (20-page limit)
@@ -22,11 +22,13 @@
 \usepackage{booktabs}
 \usepackage{slashbox}
 \usepackage{multirow}
+\usepackage{minted}
+\raggedbottom
 
 
-\newcommand\scalemath[2]{\scalebox{#1}{\mbox{\ensuremath{\displaystyle #2}}}}
+%\newcommand\scalemath[2]{\scalebox{#1}{\mbox{\ensuremath{\displaystyle #2}}}}
 \NewDocumentCommand{\codeword}{v}{%
-\texttt{\textcolor{blue}{#1}}%
+\texttt{\textcolor{black}{#1}}%
 }
 
 \PaperNumber{XX-XXX}
@@ -107,6 +109,8 @@ Data for this study was obtained through simulation. The drone chosen for this e
 \end{figure}
 
 A world with four Vicon Vantage V16 infrared cameras\cite{vicon_2022} was then created in Gazebo, and their coordinates can be seen in Table \ref{tab:cameras}. Figure \ref{fig:GazeboWorld} shows the setup of the environment. The distance from these cameras to reflective markers on the drone was measured at a rate of approximately 120 Hz, which is consistent with the spec sheet of the Vicon Vantage V16\cite{vicon_2022}.
+
+% TODO: add more cameras
 
 \begin{table}[htbp]
 	\fontsize{10}{10}\selectfont
@@ -253,7 +257,7 @@ I\dot{\omega}+\omega\times(I\omega)=\tau
 \]
 
 where $\omega$ is the angular velocity vector, $I$ is the inertia matrix, and $\tau$ is a vector of external torques. This can be rewritten as
-% COMBAK: look at this and see if the right variables are being used
+% COMBAK: look at this
 \[
 \dot{\omega}=\begin{bmatrix}
 \dot{p}\\
@@ -397,6 +401,8 @@ G(X(t), t) =
 \end{bmatrix}
 \end{equation}
 
+% WHY DO WE FIND H, G y confuse panni solrene
+
 The observation matrix, $H$, was found by taking partial of the measurement model, $G$, with respect to $X$.
 
 \begin{equation}
@@ -417,8 +423,271 @@ H = \frac{\partial G}{\partial X} =
 
 \section{Filter Setup}
 
-Using the aforementioned dynamics and measurement model, a hybrid Extended Kalman filter and an Unscented Kalman filter were implemented. The hybrid EKF algorithm that was used for this study can be seen in Algorithm \ref{alg:EKF}. The UKF algorithm used for this study can be seen in Algorithm \ref{alg:UKF}. The MATLAB implementation of these algorithms can be seen in the Appendix.
+Using the aforementioned dynamics and measurement model, a hybrid Extended Kalman filter and an Unscented Kalman filter were implemented. The hybrid EKF algorithm that was used for this study can be seen in Algorithm \ref{alg:EKF}. The UKF algorithm used for this study can be seen in Algorithm \ref{alg:UKF}. The MATLAB implementation of these algorithms can be seen in the Appendix\footnote{The code for this study can also be found at }.
+%TODO
 
+\section{Experimental Procedure}
+
+The range measurements from the cameras and the roll, pitch, yaw measurements from the IMU were stored as ROSbags, and were read into MATLAB. The a priori state was measured during every experiment. The a priori state covariance, $P_0^+$ was set to \codeword{diag([(0.001)^2 (0.001)^2 (0.001)^2 0 0 0 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2 0 0 0])}, since it is possible that there were errors on the scale of millimeters when measuring the starting position of the drone, $3.8785\cdot 10^{-5}$ radians of error from the IMU measurements (according to the standard deviation of the measurements when the drone was at rest), and 0 error in the velocities and angular rates since it was at rest. For the Unscented Kalman Filter, the velocity and $p$, $q$, $r$ covariances were set as \codeword{(0.001)^2} and \codeword{(3.8785e-5)^2} respectively, since the matrix must be positive definite. The variance of the Vicon Vantage V16 motion capture cameras was specified to be $1.5$ mm in their specsheet \cite{vicon_2022}. However, such small variances did not show how robust the filters' to non-ideal conditions. Hence, the variances of each of the four cameras' range measurements was set as $0.0015^2$ m, $0.015^2$ m, $0.002^2$ m, and $0.1^2$ m to showcase the filters' robustness, and the aforementioned $3.8785\cdot 10^{-5}$ radians of error was used for the IMU measurements. Hence, the covariance matrix of the measurements was set as \codeword{R = diag([0.0015^2 0.015^2 0.002^2 0.1^2 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2])}.
+
+Four types of trajectories were used to analyze the performance of the filters for this study:
+\begin{enumerate}[label=(\alph*)]
+\item Hover - The drone hovers to a height of 3 m and lands (as seen in Figure \ref{fig:hover1_just_traj})
+\item Circle - The drone hovers to a height of 3 m and starts flying in a circle with radius 1 m (as seen in Figure \ref{fig:circle1_just_traj})
+\item Sine - The drone hovers to a height of 3 m and flies in a sine wave in the +x-direction (as seen in Figure \ref{fig:sine1_just_traj})
+\item Square - The drone hovers to a height of 3 m and flies in a square with a sidelength of 4 m (as seen in Figure \ref{fig:square1_just_traj})
+\end{enumerate}
+
+% TODO: change the size of this later
+\begin{figure}[H]
+\centering
+\begin{subfigure}{.4\textwidth}
+	\centering
+	\includegraphics[width=0.9\textwidth]{../hover1_just_traj}
+	\caption{Hover trajectory}
+	\label{fig:hover1_just_traj}
+\end{subfigure}%
+\begin{subfigure}{.4\textwidth}
+	\centering
+	\includegraphics[width=0.9\textwidth]{../circle1_just_traj}
+	\caption{Circle trajectory}
+	\label{fig:circle1_just_traj}
+\end{subfigure}
+\begin{subfigure}{.4\textwidth}
+	\centering
+	\includegraphics[width=0.9\textwidth]{../sine1_just_traj}
+	\caption{Sine trajectory}
+	\label{fig:sine1_just_traj}
+\end{subfigure}%
+\begin{subfigure}{.4\textwidth}
+	\centering
+	\includegraphics[width=0.9\textwidth]{../square1_just_traj}
+	\caption{Square trajectory}
+	\label{fig:square1_just_traj}
+\end{subfigure}
+\caption{The trajectories that the drone followed}
+\label{fig:DroneTrajectories}
+\end{figure}
+
+The default sampling rate of the cameras was at 120 Hz, but the stored data was modified to replicate a measurement rate of 60 Hz, 24 Hz, 12 Hz, 6 Hz, and an extreme of 1 Hz, and the performance of the filters over these measurement rates was comp1ared.
+
+\section{Results and Discussion}
+
+The results of the hybrid Extended Kalman filter will be discussed first. The estimations from the EKF can be seen overlayed on top of the observations in Figure \ref{fig:Overlay}.
+
+\begin{figure}[H]
+\centering
+\begin{subfigure}{.5\textwidth}
+	\centering
+	\includegraphics[width=\textwidth]{../hover1_traj}
+	\caption{Hover trajectory}
+	\label{fig:hover1_traj}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+	\centering
+	\includegraphics[width=\textwidth]{../circle1_traj}
+	\caption{Circle trajectory}
+	\label{fig:circle1_traj}
+\end{subfigure}
+\begin{subfigure}{.5\textwidth}
+	\centering
+	\includegraphics[width=\textwidth]{../sine1_traj}
+	\caption{Sine trajectory}
+	\label{fig:sine1_traj}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+	\centering
+	\includegraphics[width=\textwidth]{../square1_traj}
+	\caption{Square trajectory}
+	\label{fig:square1_traj}
+\end{subfigure}
+\caption{The observed trajectories (magenta) overlayed with the estimated drone position (black)}
+\label{fig:Overal}
+\end{figure}
+
+The standard deviations of errors in position estimates for the different trajectories at various sampling rates can be seen in Tables \ref{tab:sigmax} through \ref{tab:sigmaz}.
+
+% TODO discuss Q
+
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+\begin{table}[H]
+\centering
+\caption{Standard deviation of x-position error}
+\label{tab:sigmax}
+\begin{tabular}{|r|llll|}
+\hline
+\multicolumn{1}{|l|}{\multirow{2}{*}{\backslashbox{Sample Rate}{Trajectory Type}}} & \multicolumn{4}{c|}{$\sigma_x$ (in m)}                                                                            \\ \cline{2-5} 
+\multicolumn{1}{|l|}{}                                                             & \multicolumn{1}{c}{Hover} & \multicolumn{1}{c}{Circle} & \multicolumn{1}{c}{Square} & \multicolumn{1}{c|}{Sine} \\ \hline
+120 Hz                                                                             & 0.0042149                 & 0.0084198                  & 0.0083749                  & 0.0054409                 \\
+60 Hz                                                                              & 0.0049716                 & 0.010091                   & 0.0099932                  & 0.0055549                 \\
+24 Hz                                                                              & 0.0059826                 & 0.012189                   & 0.011919                   & 0.0070862                 \\
+12 Hz                                                                              & 0.007542                 & 0.014241                   & 0.012638                   & 0.0084996                 \\
+6 Hz                                                                               & 0.007107                 & 0.015207                   & 0.012958                   & 0.0091919                 \\
+1 Hz                                                                               & 0.010384                 & 0.027626                   & 0.015892                   & 0.01356                  \\ \hline
+\end{tabular}
+\end{table}
+
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+\begin{table}[H]
+\centering
+\caption{Standard deviation of y-position error}
+\label{tab:sigmay}
+\begin{tabular}{|r|llll|}
+\hline
+\multicolumn{1}{|l|}{\multirow{2}{*}{\backslashbox{Sample Rate}{Trajectory Type}}} & \multicolumn{4}{c|}{$\sigma_y$ (in m)}                                                                          \\ \cline{2-5} 
+\multicolumn{1}{|l|}{}                                                             & \multicolumn{1}{c}{Hover} & \multicolumn{1}{c}{Circle} & \multicolumn{1}{c}{Square} & \multicolumn{1}{c|}{Sine} \\ \hline
+120 Hz                                                                             & 0.0042601                 & 0.0083595                  & 0.0083918                  & 0.0052932                 \\
+60 Hz                                                                              & 0.0050061                 & 0.010083                   & 0.0099853                  & 0.0055125                  \\
+24 Hz                                                                              & 0.0061169                 & 0.012145                   & 0.011965                   & 0.0072212                 \\
+12 Hz                                                                              & 0.0073317                  & 0.014331                   & 0.012841                   & 0.0086543                 \\
+6 Hz                                                                               & 0.0071077                 & 0.014991                   & 0.012912                   & 0.0093219                 \\
+1 Hz                                                                               & 0.011162                 & 0.028407                    & 0.01622                   & 0.013620             \\ \hline
+\end{tabular}
+\end{table}
+
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+\begin{table}[H]
+\centering
+\caption{Standard deviation of z-position error}
+\label{tab:sigmaz}
+\begin{tabular}{|r|llll|}
+\hline
+\multicolumn{1}{|l|}{\multirow{2}{*}{\backslashbox{Sample Rate}{Trajectory Type}}} & \multicolumn{4}{c|}{$\sigma_z$ (in m)}                                                                          \\ \cline{2-5} 
+\multicolumn{1}{|l|}{}                                                             & \multicolumn{1}{c}{Hover} & \multicolumn{1}{c}{Circle} & \multicolumn{1}{c}{Square} & \multicolumn{1}{c|}{Sine} \\ \hline
+120 Hz                                                                             & 0.0038442                 & 0.0030611                  & 0.003646                  & 0.011294                  \\
+60 Hz                                                                              & 0.0032534                 & 0.0032203                  & 0.0041564                  & 0.011154                  \\
+24 Hz                                                                              & 0.0024082                 & 0.0038679                  & 0.004756                   & 0.015028                  \\
+12 Hz                                                                              & 0.0025436                 & 0.0038703                  & 0.0056868                  & 0.01889                  \\
+6 Hz                                                                               & 0.0023293                 & 0.0039609                  & 0.0053087                  & 0.017223                  \\
+1 Hz                                                                               & 0.018534                   & 0.0077148                    & 0.0068089                  & 0.030209                  \\ \hline
+\end{tabular}
+\end{table}
+
+It can be seen from Tables \ref{tab:sigmax} through \ref{tab:sigmaz} that the error in actual position and estimated position increases for all trajectories as the sampling rate is decreased. This is intuitive because as the resolution of data decreases, the system has to use its knowledge of the system's dynamics to propagate itself to the next state, and this may differ from the system's real-life behavior since many approximations were made to linearize the system's dynamics. This also explains why the magnitude of error in the z-direction is lower than the error in the x and y directions, since the drone does not move much in the z directions while performing the trajectory, therefore only causing small deviations from the actual. (WHAT) This can also be noticed in Figure \ref{fig:SquareErr}.
+
+\begin{figure}[htb]
+\centering
+\begin{subfigure}{.5\textwidth}
+	\centering
+	\includegraphics[width=0.9\textwidth]{../square1_err}
+	\caption{Position error on the square trajectory}
+	\label{fig:SquareErr1}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+	\centering
+	\includegraphics[width=0.9\textwidth]{../circle1_err}
+	\caption{Position error on the circle trajectory}
+	\label{fig:SquareErr2}
+\end{subfigure}
+\begin{subfigure}{.5\textwidth}
+	\centering
+	\includegraphics[width=0.9\textwidth]{../hover1_err}
+	\caption{Position error on the hover trajectory}
+	\label{fig:SquareErr5}
+\end{subfigure}%
+\begin{subfigure}{.5\textwidth}
+	\centering
+	\includegraphics[width=0.9\textwidth]{../sine1_err}
+	\caption{Position error on the sine trajectory}
+	\label{fig:SquareErr10}
+\end{subfigure}
+\caption{Error between predicted and actual positions on different trajectories}
+\label{fig:SquareErr}
+\end{figure}
+
+That being said, it can be noticed from Figure \ref{fig:SquareErr} that the filter is still accurate to a hundredth of a meter, and having centimeter-level accuracy is incredible when considering that the errors in the measurements from the motion capture cameras were greatly exaggerated (used $1.5$ mm, $1.5$ cm, $2$ mm, and $10$ cm in each of the four cameras instead of the rated values of $1.5$ mm\cite{vicon_2022}). %It can also be noticed that the error along a certain direction peaks when the drone is at the ends of the trajectory in that direction. This is due to the fact that the highest difference between the observed state and the state according to the dynamics occurs at the extremes of the trajectory. This can be improved with better tuning of the $Q$ matrix, as that will force the filter to prioritize the measurements.
+% TODO: should I even mention this?
+
+The results of the Unscented Kalman Filter will be discussed next. The first noticeable difference between the EKF and UKF was their runtime. Table \ref{tab:RunTime} shows the runtimes of the EKF and UKF (measured using MATLAB's \texttt{tic} and \texttt{toc} functions) for different trajectories. The UKF takes 24 times longer per iteration than the EKF, mainly due to generating and propagating sigma points. With an average runtime of 2.9589 seconds, it is not a viable option to put the UKF on an embedded system to control a drone.
+
+\begin{table}[H]
+\centering
+\caption{Runtimes (in seconds) of the EKF and UKF over all trajectories at a sample rate of 6 Hz}
+\label{tab:RunTime}
+\begin{tabular}{|r|l|l|}
+\hline
+\multicolumn{1}{|l|}{\backslashbox{Trajectory}{Filter}} & \multicolumn{1}{c|}{EKF} & UKF             \\ \hline
+Hover                                                   & 0.125                    & 2.8026          \\
+Circle                                                  & 0.12666                  & 3.0158          \\
+Square                                                  & 0.11342                  & 2.9119          \\
+Sine                                                    & 0.12442                  & 3.0153          \\ \hline
+\textbf{Average}                                        & \textbf{0.12238}         & \textbf{2.9589} \\ \hline
+\end{tabular}
+\end{table}
+
+Table \ref{tab:UKFsigma} shows the standard deviation of the position error of the UKF estimates. When compared with the ``6 Hz'' row of Tables \ref{tab:sigmax} through \ref{tab:sigmaz}, it can be seen that the UKF estimates are slightly better, with an improvement of approximately 2 mm. This slight improvement in accuracy does not outweigh the UKF's massive increase in runtime, especially considering that the filter will need to be deployed on an embedded system to control the drone.
+
+\begin{table}[H]
+\centering
+\caption{Standard deviation of the position error of UKF estimates at a sample rate of 6 Hz}
+\label{tab:UKFsigma}
+\begin{tabular}{|r|l|l|l|l|}
+\hline
+\multicolumn{1}{|l|}{\backslashbox{Direction}{Trajectory}} & \multicolumn{1}{c|}{Hover} & \multicolumn{1}{c|}{Circle} & \multicolumn{1}{c|}{Square} & \multicolumn{1}{c|}{Sine} \\ \hline
+$\sigma_x$                                                 & 0.013826                   & 0.010209                    & 0.0094935                   & 0.0099276                 \\
+$\sigma_y$                                                 & 0.015173                   & 0.010124                    & 0.0094954                   & 0.0095272                 \\
+$\sigma_z$                                                 & 0.0049896                  & 0.0057478                   & 0.0043911                   & 0.01642                   \\ \hline
+\textbf{Average}                                           & \textbf{0.01133}           & \textbf{0.008694}           & \textbf{0.010209}           & \textbf{0.011958}         \\ \hline
+\end{tabular}
+\end{table}
+
+Now that it has been decided that the EKF is a better option for the application that is being studied, the EKF will be rerun with measurement error values that are more consistent with the real-life specifications of the motion capture cameras. Recall that the variances of the cameras were greatly exaggerated for this study. According to the Vicon Vantage V16's specsheet \cite{vicon_2022}, the cameras have an error of 1.5 mm. After changing the $R$ matrix to reflect this, the errors of the EKF change as can be seen graphically in Figure \ref{fig:NewSigma} or numerically in Table \ref{tab:NewSigma}. Unsurprisingly, the standard deviations of the position errors are much better when compared to the errors with the perturbed $R$ matrix.
+
+\begin{figure}[H]
+	\centering\includegraphics[width=0.8\textwidth]{../_BAK_err}
+	\caption{Comparison of the position error when using the actual errors ($R_a=R_{actual}$) v.s. the exaggerated errors ($R_{e}=R_{exaggerated}$)}
+	\label{fig:NewSigma}
+\end{figure}
+
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+\begin{table}[H]
+\centering
+\caption{Standard deviation of the position error when using the actual errors ($R_a=R_{actual}$) v.s. the exaggerated errors ($R_{e}=R_{exaggerated}$)}
+\label{tab:NewSigma}
+\begin{tabular}{|r|ll|ll|}
+\hline
+\multirow{2}{*}{\ } & \multicolumn{2}{c|}{Hover} & \multicolumn{2}{c|}{Circle} \\ \cline{2-5} 
+ & \multicolumn{1}{c|}{$R_{a}$} & \multicolumn{1}{c|}{$R_{e}$} & \multicolumn{1}{c|}{$R_{a}$} & \multicolumn{1}{c|}{$R_{e}$} \\ \hline
+$\sigma_x$ & \multicolumn{1}{l|}{0.0010586} & 0.0042149 & \multicolumn{1}{l|}{0.0016466} & 0.0084198 \\ \hline
+$\sigma_y$ & \multicolumn{1}{l|}{0.0012544} & 0.0042601 & \multicolumn{1}{l|}{0.0016962} & 0.0083595 \\ \hline
+$\sigma_z$ & \multicolumn{1}{l|}{0.0023459} & 0.0038442 & \multicolumn{1}{l|}{0.0017194} & 0.0030611 \\ \hline
+\end{tabular}
+\end{table}
+
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+\begin{table}[H]
+\centering
+\begin{tabular}{|r|ll|ll|}
+\hline
+\multirow{2}{*}{\ } & \multicolumn{2}{c|}{Square} & \multicolumn{2}{c|}{Sine} \\ \cline{2-5} 
+ & \multicolumn{1}{c|}{$R_{a}$} & \multicolumn{1}{c|}{$R_{e}$} & \multicolumn{1}{c|}{$R_{a}$} & \multicolumn{1}{c|}{$R_{e}$} \\ \hline
+$\sigma_x$ & \multicolumn{1}{l|}{0.0015686} & 0.0083749 & \multicolumn{1}{l|}{0.0014993} & 0.0054409 \\ \hline
+$\sigma_y$ & \multicolumn{1}{l|}{0.0015528} & 0.0083918 & \multicolumn{1}{l|}{0.0012982} & 0.0052932 \\ \hline
+$\sigma_z$ & \multicolumn{1}{l|}{0.0015894} & 0.003646 & \multicolumn{1}{l|}{0.0022801} & 0.011294 \\ \hline
+\end{tabular}
+\end{table}
+
+\section{Conclusion}
+
+In this study, a hybrid Extended Kalman filter and an Unscented Kalman filter were implemented on the dynamics of a drone. In order to improve the quality of the study, an LQR controller was used to determine the inputs to the system at each time, thereby increasing the types of trajectories that could be analyzed, as opposed to past studies that just involved the drone hovering or with constant inputs. Simulated measurements from Gazebo were used to test the filter. Through this study, it was noted that even with greatly exaggerated measurement covariances, the EKF was able to predict the position of the drone with centimeter-level accuracy. When the measurement covariances were changed to more closely reflect their actual values, the filter performed exceptional well, showing millimeter-level accuracy. It was also noted that the UKF provided a slight improvement in accuracy, but took $24$ times longer than the EKF. The slight improvement in accuracy does not outweigh the massive increase in times, and hence it can be concluded that implementing the UKF on an embedded system is not a viable option. This study proved that the EKF is accurate, quick, and robust to measurement perturbations.
+
+\pagebreak
+\section{Acknowledgments}
+
+Thanks to Dr. Brian Gunter for a great semester. I'd heard of Kalman filters through my work in the past, but I hadn't known how they functioned. I learned a lot through this class, and the way you taught the subject was very interesting, so much so that I've asked my manager to try to put me on a project involving research Kalman filters this summer. I'm looking forward to working more intricately with Kalman filters and applying what I've learned from this class.
+
+\bibliographystyle{AAS_publication}   % Number the references.
+\bibliography{references}   % Use references.bib to resolve the labels.
+
+
+\pagebreak
+\appendix
+\section*{Appendix A: Algorithms}
 \begin{algorithm}[H]
 \footnotesize
 \caption{Hybrid Extended Kalman filter}
@@ -479,123 +748,12 @@ Using the aforementioned dynamics and measurement model, a hybrid Extended Kalma
 \end{algorithmic}
 \end{algorithm}
 
-\section{Experimental Procedure}
-
-The range measurements from the cameras and the roll, pitch, yaw measurements from the IMU were stored as ROSbags, and were read into MATLAB. The a priori state was measured during every experiment. The a priori state covariance, $P_0^+$ was set to \codeword{diag([(0.001)^2 (0.001)^2 (0.001)^2 0 0 0 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2 0 0 0])}, since it is possible that there were errors on the scale of millimeters when measuring the starting position of the drone, $3.8785\cdot 10^{-5}$ radians of error from the IMU measurements (according to the standard deviation of the measurements when the drone was at rest), and 0 error in the velocities and angular rates since it was at rest. The variance of the Vicon Vantage V16 motion capture cameras was specified to be $1.5$ mm in their specsheet \cite{vicon_2022}. However, such small variances did not show how robust the filters' to non-ideal conditions. Hence, the variances of each of the four cameras' range measurements was set as $0.0015^2$ m, $0.015^2$ m, $0.002^2$ m, and $0.1^2$ m to showcase the filters' robustness, and the aforementioned $3.8785\cdot 10^{-5}$ radians of error was used for the IMU measurements. Hence, the covariance matrix of the measurements was set as \codeword{R = diag([0.0015^2 0.015^2 0.002^2 0.1^2 (3.8785e-5)^2 (3.8785e-5)^2 (3.8785e-5)^2])}.
-
-Four types of trajectories were used to analyze the performance of the filters for this study:
-\begin{enumerate}[label=(\alph*)]
-\item Hover - The drone hovers to a height of 3 m and lands (as seen in Figure \ref{fig:hover1_just_traj})
-\item Circle - The drone hovers to a height of 3 m and starts flying in a circle with radius 1 m (as seen in Figure \ref{fig:circle1_just_traj})
-\item Sine - The drone hovers to a height of 3 m and flies in a sine wave in the +x-direction (as seen in Figure \ref{fig:sine1_just_traj})
-\item Square - The drone hovers to a height of 3 m and flies in a square with a sidelength of 4 m (as seen in Figure \ref{fig:square1_just_traj})
-\end{enumerate}
-
-% TODO: change the size of this later
-\begin{figure}[H]
-\centering
-\begin{subfigure}{.3\textwidth}
-	\centering
-	\includegraphics[width=0.9\textwidth]{../circle1_just_traj}
-	\caption{Hover trajectory!!!}
-	\label{fig:hover1_just_traj}
-\end{subfigure}%
-\begin{subfigure}{.3\textwidth}
-	\centering
-	\includegraphics[width=0.9\textwidth]{../circle1_just_traj}
-	\caption{Circle trajectory}
-	\label{fig:circle1_just_traj}
-\end{subfigure}
-\begin{subfigure}{.3\textwidth}
-	\centering
-	\includegraphics[width=0.9\textwidth]{../circle1_just_traj}
-	\caption{Sine trajectory!!!}
-	\label{fig:sine1_just_traj}
-\end{subfigure}%
-\begin{subfigure}{.3\textwidth}
-	\centering
-	\includegraphics[width=0.9\textwidth]{../circle1_just_traj}
-	\caption{Square trajectory!!!}
-	\label{fig:square1_just_traj}
-\end{subfigure}
-\caption{The trajectories that the drone followed}
-\label{fig:DroneTrajectories}
-\end{figure}
-
-The default sampling rate of the cameras was at 120 Hz, but the stored data was modified to replicate a measurement rate of 60 Hz, 24 Hz, 12 Hz, 6 Hz, and an extreme of 1 Hz, and the performance of the filters over these measurement rates was compared.
-
-\section{Results and Discussion}
-
-The results of the hybrid Extended Kalman filter will be discussed first. The standard deviations of errors in position estimates for the different trajectories at various sampling rates can be seen in Tables \ref{tab:sigmax} through \ref{tab:sigmaz}.
-
-% TODO discuss Q
-
-\begin{table}[htb]
-\centering
-\caption{Standard deviation of x-position error}
-\label{tab:sigmax}
-\begin{tabular}{|r|llll|}
-\hline
-\multicolumn{1}{|l|}{\multirow{2}{*}{\backslashbox{Sample Rate}{Trajectory Type}}} & \multicolumn{4}{c|}{$\sigma_x$ (in m)}                                                                            \\ \cline{2-5} 
-\multicolumn{1}{|l|}{}                                                             & \multicolumn{1}{c}{Hover} & \multicolumn{1}{c}{Circle} & \multicolumn{1}{c}{Square} & \multicolumn{1}{c|}{Sine} \\ \hline
-120 Hz                                                                             & 0.0039932                 & 0.0085408                  & 0.0080575                  & 0.0049977                 \\
-60 Hz                                                                              & 0.0051788                 & 0.010278                   & 0.0096354                  & 0.0057264                 \\
-24 Hz                                                                              & 0.0056789                 & 0.013199                   & 0.011393                   & 0.0074061                 \\
-12 Hz                                                                              & 0.0074068                 & 0.014731                   & 0.012044                   & 0.0085448                 \\
-6 Hz                                                                               & 0.0081106                 & 0.016047                   & 0.012508                   & 0.0087954                 \\
-1 Hz                                                                               & 0.0095391                 & 0.029615                   & 0.015374                   & 0.013841                  \\ \hline
-\end{tabular}
-\end{table}
-
-\begin{table}[htb]
-\centering
-\caption{Standard deviation of y-position error}
-\label{tab:sigmay}
-\begin{tabular}{|r|llll|}
-\hline
-\multicolumn{1}{|l|}{\multirow{2}{*}{\backslashbox{Sample Rate}{Trajectory Type}}} & \multicolumn{4}{c|}{$\sigma_y$ (in m)}                                                                          \\ \cline{2-5} 
-\multicolumn{1}{|l|}{}                                                             & \multicolumn{1}{c}{Hover} & \multicolumn{1}{c}{Circle} & \multicolumn{1}{c}{Square} & \multicolumn{1}{c|}{Sine} \\ \hline
-120 Hz                                                                             & 0.0040409                 & 0.0084944                  & 0.0080132                  & 0.0049065                 \\
-60 Hz                                                                              & 0.0052825                 & 0.010371                   & 0.0095661                  & 0.005823                  \\
-24 Hz                                                                              & 0.0056995                 & 0.012979                   & 0.011269                   & 0.0074443                 \\
-12 Hz                                                                              & 0.007463                  & 0.014687                   & 0.011893                   & 0.0089392                 \\
-6 Hz                                                                               & 0.0084155                 & 0.015925                   & 0.012634                   & 0.0087636                 \\
-1 Hz                                                                               & 0.0086878                 & 0.02909                    & 0.015167                   & 0.013621                  \\ \hline
-\end{tabular}
-\end{table}
-
-\begin{table}[htb]
-\centering
-\caption{Standard deviation of z-position error}
-\label{tab:sigmaz}
-\begin{tabular}{|r|llll|}
-\hline
-\multicolumn{1}{|l|}{\multirow{2}{*}{\backslashbox{Sample Rate}{Trajectory Type}}} & \multicolumn{4}{c|}{$\sigma_z$ (in m)}                                                                          \\ \cline{2-5} 
-\multicolumn{1}{|l|}{}                                                             & \multicolumn{1}{c}{Hover} & \multicolumn{1}{c}{Circle} & \multicolumn{1}{c}{Square} & \multicolumn{1}{c|}{Sine} \\ \hline
-120 Hz                                                                             & 0.0031726                 & 0.0030319                  & 0.0035243                  & 0.010083                  \\
-60 Hz                                                                              & 0.0028092                 & 0.0032654                  & 0.0040193                  & 0.012393                  \\
-24 Hz                                                                              & 0.0024405                 & 0.0036128                  & 0.004693                   & 0.015404                  \\
-12 Hz                                                                              & 0.0027021                 & 0.0046044                  & 0.0048127                  & 0.019746                  \\
-6 Hz                                                                               & 0.0024644                 & 0.0041818                  & 0.0056552                  & 0.017945                  \\
-1 Hz                                                                               & 0.01566                   & 0.01327                    & 0.0088481                  & 0.030748                  \\ \hline
-\end{tabular}
-\end{table}
-
-It can be seen from Tables \ref{tab:sigmax} through \ref{tab:sigmaz} that the error in actual position and estimated position increases for all trajectories as the sampling rate is decreased. This is intuitive because as the resolution of data decreases, the system has to use its knowledge of the system's dynamics to propagate itself to the next state, and this may differ from the system's real-life behavior since many approximations were made to linearize the system's dynamics. This also explains why the magnitude of error in the z-direction is lower than the error in the x and y directions, since the drone does not move much in the z directions while performing the trajectory, therefore only causing small deviations from the actual. (WHAT) That being said, the filter is still accurate to a hundredth of a meter, and having centimeter level accuracy is incredible when considering that the errors in the measurements from the motion capture cameras were greatly exaggerated (used $1.5$ mm, $1.5$ cm, $2$ mm, and $10$ cm in each of the four cameras instead of the rated values of $1.5$ mm\cite{vicon_2022}).
-
-\section{Conclusion}
+\section*{Appendix B: Additional Plots and Data}
 
 
-\section{Acknowledgment}
 
-Thanks to Dr. Brian Gunter for a great semester. I'd heard of Kalman filters through my work in the past, but I hadn't known how they worked. The PhD student I was working with during my last semester at UT Austin's Autonomous Systems Group told me I'd learn about them in graduate school, and I got to learn about them from Dr. Gunter. I learned a lot through this class, and I'm looking forward to working more intricately with Kalman filters. 
-
-\appendix
-\section*{Appendix: Title here}
-
-
-\bibliographystyle{AAS_publication}   % Number the references.
-\bibliography{references}   % Use references.bib to resolve the labels.
-
+\section*{Appendix C: MATLAB Code}
+\inputminted[linenos=true, breaklines=true, breakanywhere=true, fontsize=\scriptsize]{MATLAB}{../extended_kalman_filter.m}
+\inputminted[linenos=true, breaklines=true, breakanywhere=true, fontsize=\scriptsize]{MATLAB}{../unscented_kalman_filter.m}
 
 \end{document}
