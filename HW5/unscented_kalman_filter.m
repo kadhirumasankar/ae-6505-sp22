@@ -23,14 +23,14 @@ P = diag([4 4 4 0.1 0.1 0.1])/3.281;
 R = [(1.524)^2 0 0;
      0 (0.1*pi/180)^2 0;
      0 0 (0.1*pi/180)^2];      %the error covariance constant to be used
-% Q = diag([0.5^2,0.5^2,0.5^2,0.01^2,0.01^2,0.01^2]);
-Q = zeros(6);
+Q = diag([0.5^2,0.5^2,0.5^2,0.01^2,0.01^2,0.01^2]);
+% Q = zeros(6);
 M = eye(3); % COMBAK: is M eye(3) correct?
 W = ones(2*n,1) / (2*n); % UKF weights
  
 for i =2:length(rho)
     % Observed
-    y_obs(:,i) = [rho(i); alpha(i); beta(i)];% + randn*sigmaw;
+    y_obs(:,i) = [rho(i); alpha(i); beta(i)] + sqrt(diag(R)).*randn(size(diag(R)));% + randn*sigmaw;
     
     xhat_k_1 = [];
     % Sigma points
@@ -93,7 +93,7 @@ for i =2:length(rho)
         temp_Py = temp_Py + (y_comp(:,j) - y_comp_hat)*(y_comp(:,j) - y_comp_hat)';
         temp_Pxy = temp_Pxy + (xhat_k(:,j)-xhatk_)*(y_comp(:,j)-y_comp_hat)';
     end
-    Py = temp_Py/(2*n) + R; % Add Q for noise floor + Q;
+    Py = temp_Py/(2*n) + R;
     Pxy = temp_Pxy/(2*n);
     
     K = Pxy*inv(Py);
